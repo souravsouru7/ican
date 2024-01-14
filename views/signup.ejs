@@ -1,0 +1,58 @@
+
+<link rel="stylesheet" href="styles/signup.css">
+<h1 style="text-align: center;">Sign Up </h1>
+<div class="container">
+    <div class="screen">
+        <div class="screen__content">
+            <form class="login" action="/signup" method="post" onsubmit="return validateForm()">
+                <div class="login__field">
+                    <label for="name">Name:</label>
+                    <input type="text" class="login__input" placeholder="User name" name="name" id="name" required>
+                    <div id="nameError" class="error-message"></div>
+                </div>
+             
+                <div class="login__field">
+                    <label for="email">Email:</label>
+                    <input type="email" class="login__input" placeholder="Email" name="email" id="email" required>
+                    <div id="emailError" class="error-message"></div>
+                </div>
+                <div class="login__field">
+                    <label for="mobile">Phone:</label>
+                    <input type="tel" class="login__input" placeholder="Mobile number" name="mobile" id="mobile" required>
+                    <div id="mobileError" class="error-message"></div>
+                </div>
+                <div class="login__field">
+                    <label for="password">Password:</label>
+                    <input type="password" class="login__input" placeholder="Password" name="password" id="password" required>
+                    <div id="passwordError" class="error-message"></div>
+                </div>
+                <div class="login__field">
+                    <label for="repassword">Confirm Password:</label>
+                    <input type="password" class="login__input" placeholder="RePassword" name="repassword" id="repassword" required>
+                    <div id="repasswordError" class="error-message"></div>
+                </div>
+                
+                <button class="button login__submit" type="submit">
+                    <span class="button__text">Signup</span>
+                    <i class="button__icon fas fa-chevron-right"></i>
+                </button>
+            </form>
+            <div class="social-login">
+                <div class="social-icons">
+                    <!-- Add your social icons here if needed -->
+                </div>
+            </div>
+        </div>
+        <div class="screen__background">
+            <span class="screen__background__shape screen__background__shape4"></span>
+            <span class="screen__background__shape screen__background__shape3"></span>
+            <span class="screen__background__shape screen__background__shape2"></span>
+            <span class="screen__background__shape screen__background__shape1"></span>
+        </div>
+    </div>
+</div>
+
+<script src="js/signup.js"></script>
+
+</body>
+</html>

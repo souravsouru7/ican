@@ -1,0 +1,153 @@
+<!-- Your HTML file -->
+<%- include("profile.ejs") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Title</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+            margin-top: 20px;
+        }
+
+        #formContainer {
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #495057;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            display: block;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>New Adress</h1>
+
+    <div id="formContainer">
+        <form id="addressForm" action="/submit-new-address" method="post">
+            <label for="street">Street:</label>
+            <input type="text" id="street" name="street">
+            <div id="streetError" class="error-message"></div>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city">
+            <div id="cityError" class="error-message"></div>
+
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state">
+            <div id="stateError" class="error-message"></div>
+
+            <label for="zipCode">Zip Code:</label>
+            <input type="text" id="zipCode" name="zipCode">
+            <div id="zipCodeError" class="error-message"></div>
+
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country">
+            <div id="countryError" class="error-message"></div>
+
+            <button type="submit">Add Address</button>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('addressForm').addEventListener('submit', function (event) {
+                if (!validateForm()) {
+                    event.preventDefault();
+                }
+            });
+
+            function validateForm() {
+                var street = document.getElementById('street').value;
+                var city = document.getElementById('city').value;
+                var state = document.getElementById('state').value;
+                var zipCode = document.getElementById('zipCode').value;
+                var country = document.getElementById('country').value;
+
+                var isValid = true; // Initialize isValid to true
+
+                isValid = validateField(street, 'streetError', 'please fill this field') && isValid;
+                isValid = validateField(city, 'cityError', 'please fill this field') && isValid;
+                isValid = validateField(state, 'stateError', 'please fill this field') && isValid;
+                isValid = validateField(zipCode, 'zipCodeError', 'please fill this field and must be a number') && isValid;
+                isValid = validateField(country, 'countryError', 'please fill this field') && isValid;
+
+                return isValid; 
+            }
+
+            function validateField(value, elementId, errorMessage) {
+                var errorElement = document.getElementById(elementId);
+                if (value === "") {
+                    errorElement.innerHTML = errorMessage;
+                    errorElement.style.color = 'red';
+                    errorElement.style.display = 'block';
+                    return false;
+                } else {
+                    errorElement.innerHTML = '';
+
+                    // Additional validation for ZIP Code to check if it's a number
+                    if (elementId === 'zipCodeError' && !(/^\d+$/.test(value))) {
+                        errorElement.innerHTML = 'Must be a number';
+                        errorElement.style.color = 'red';
+                        errorElement.style.display = 'block';
+                        return false;
+                    }
+
+                    errorElement.style.display = 'none'; 
+                    return true;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

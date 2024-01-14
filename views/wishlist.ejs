@@ -1,0 +1,66 @@
+<!-- views/wishlist.ejs -->
+
+
+<%- include("profile.ejs") %>
+<style>
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+
+    .pro-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        margin: 20px 0;
+    }
+
+    .pro {
+        max-width: 300px;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin: 10px;
+        padding: 15px;
+        text-align: center;
+    }
+
+    .pro img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    h3 {
+        color: #007bff;
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: #555;
+    }
+
+    /* Add other styles as needed */
+</style>
+
+<h2>Wishlist</h2>
+
+<div class="pro-container">
+    <% if (wishlist.length > 0) { %>
+        <% wishlist.forEach(item => { %>
+            <div class="pro">
+                <img src="/uploads/<%= item.product.productImage %>" alt="<%= item.product.productName %> Image">
+                <h3><%= item.product.productName %></h3>
+                <p><strong>Category:</strong> <%= item.product.category.name %></p>
+                <!-- Add other product details as needed -->
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>Your wishlist is empty.</p>
+    <% } %>
+</div>
+
+<!-- ... (other HTML) -->

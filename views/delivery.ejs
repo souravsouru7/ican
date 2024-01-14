@@ -1,0 +1,442 @@
+<style>
+  
+  #delivery {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  tbody tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  select {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+  }
+  
+  #order-total {
+    text-align: right;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    padding: 15px;
+    background-color: #e44d26;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #c5371f;
+  }
+  
+  #order-total h3 {
+    font-size: 1.2em;
+    margin-top: 10px;
+    color: #333;
+  }
+  
+  .order-total-amount {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #e44d26;
+    
+  }
+  input[type="radio"] {
+      margin-right: 10px;
+  }
+  #coupons {
+    margin-top: 20px;
+  }
+
+  #coupon-form {
+    display: flex;
+    align-items: center;
+  }
+
+  #coupon-code {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 10px;
+  }
+
+  #remove-coupon-button,
+  #apply-coupon-button {
+    padding: 10px;
+    background-color: #337ab7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  #remove-coupon-button:hover,
+  #apply-coupon-button:hover {
+    background-color: #286090;
+  }
+
+  #coupon-feedback {
+    margin-top: 10px;
+    color: #e44d26;
+    font-weight: bold;
+  }
+
+  #payment-options {
+    margin-top: 20px;
+  }
+
+  #payment-options label {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  #placeOrderBtn {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+  }
+  </style>
+  <%- include("header.ejs") %>
+  <link rel="stylesheet" href="styles/delivery.css" />
+  
+  <section id="delivery" class="section-p1">
+    <h2>Your Order Details</h2>
+    <table width="100%">
+      <thead>
+        <tr>
+          <td>Product</td>
+          <td>Price</td>
+          <td>Quantity</td>
+          <td>Subtotal</td>
+        </tr>
+      </thead>
+      <tbody>
+        <% products.forEach(product => { %>
+        <tr>
+          <td><%= product.productName %></td>
+          <td>
+            <% if (product.regularPrice !== undefined) { %>
+              RS <%= product.regularPrice.toFixed(2) %>
+            <% } else { %>
+              Price not available
+            <% } %>
+          </td>
+          <td><%= product.quantity %></td>
+          <td>
+            <% if (product.regularPrice !== undefined) { %>
+              <%= (product.quantity * product.regularPrice).toFixed(2) %>
+            <% } else { %>
+              Subtotal not available
+            <% } %>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  
+    <div id="order-total">
+      <h3>Order Total</h3>
+      <table>
+        <tr>
+          <td><strong>Total</strong></td>
+          <!-- Directly show the total amount from the Cart model -->
+            <td class="order-total-amount"><span id="total-amount"><%= cart.totalAmount.toFixed(2) %></span></td>
+
+        </tr>
+      </table>
+    </div>
+  
+    <select name="deliveryAddress">
+      <% addresses.forEach(address => { %>
+          <option value="<%= address._id %>">
+              <%= `${address.street}, ${address.city}, ${address.state}, ${address.zipCode}, ${address.country}` %>
+          </option>
+      <% }); %>
+    </select>
+    <div id="coupons">
+      <h3>Apply Coupon</h3>
+      <form id="coupon-form">
+        <input type="text" id="coupon-code" placeholder="Enter your coupon" />
+        <button class="normal" id="remove-coupon-button" onclick="removeCoupon(); return false;" style="display: none;">Remove Coupon</button>
+        <button class="normal" id="apply-coupon-button" onclick="applyCoupon(); return false;">Apply</button>
+  
+      </form>
+      <div id="coupon-feedback"></div>
+    </div>
+  
+    <div id="payment-options">
+      <label>
+        <input type="radio" name="paymentMethod" value="cod" checked>
+        Cash on Delivery
+      </label>
+      <label>
+        <input type="radio" name="paymentMethod" value="online">
+        Online Payment
+      </label>
+      <!-- New option for Wallet payment -->
+      <label>
+        <input type="radio" name="paymentMethod" value="wallet">
+        Wallet
+      </label>
+    </div>
+  
+    <a href="#" id="placeOrderBtn">
+      <button class="normal">Place Order</button>
+    </a>
+  
+  </section>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  
+  <script>
+  document.addEventListener("DOMContentLoaded", async function () {
+    // Fetch the updated cart details and total
+    await updateCartDetails();
+    updateTotal();
+    const placeOrderBtn = document.getElementById("placeOrderBtn");
+  
+    placeOrderBtn.addEventListener("click", async function (event) {
+      // Get the selected delivery address and payment method
+      const selectedAddress = document.querySelector('select[name="deliveryAddress"]').value;
+      const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+  
+      if (!selectedAddress) {
+        alert("Please select a delivery address.");
+        return;
+      }
+  
+      // You can add further validation for the payment method if needed
+  
+      if (selectedPaymentMethod === "online" || selectedPaymentMethod === "wallet") {
+        try {
+          const orderDetails = await generateRazorpayOrder(selectedAddress, selectedPaymentMethod);
+  
+          // Create a function to handle the response from Razorpay
+          const handleRazorpayResponse = async (response) => {
+            console.log(response);
+  
+            // Check if the payment is successful
+            if (response.razorpay_payment_id || selectedPaymentMethod === "wallet") {
+              // Make an additional request to store order details
+              await storeOrderDetails(orderDetails.orderId, selectedPaymentMethod);
+  
+              // Redirect to the success page after a successful payment
+              window.location.href = "/successpage";
+            }
+          };
+  
+          if (selectedPaymentMethod === "online") {
+            const options = {
+              key: orderDetails.keyId,
+              amount: orderDetails.amount,
+              currency: orderDetails.currency,
+              order_id: orderDetails.orderId,
+              handler: handleRazorpayResponse,
+            };
+  
+            var rzp = new Razorpay(options);
+            rzp.open();
+          } else if (selectedPaymentMethod === "wallet") {
+            // For wallet payment, no need to open Razorpay, proceed to handle the response
+            handleRazorpayResponse({});
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      } else if (selectedPaymentMethod === "cod") {
+ 
+    try {
+      const response = await fetch(`/generate-cod-order/${selectedAddress}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ selectedPaymentMethod }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        await storeOrderDetails(data.orderId, selectedPaymentMethod);
+        window.location.href = "/successpage";
+      } else {
+        throw new Error('Error generating Cash on Delivery order');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+    });
+  
+    async function generateRazorpayOrder(selectedAddress, selectedPaymentMethod) {
+      try {
+        const response = await fetch('/generate-razorpay-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ selectedAddress, selectedPaymentMethod }),
+        });
+  
+        if (response.ok) {
+          return await response.json();
+        } else {
+          throw new Error('Error generating Razorpay order');
+        }
+      } catch (error) {
+        console.error(error);
+        throw new Error('Error generating Razorpay order');
+      }
+    }
+  
+    async function storeOrderDetails(orderId, selectedPaymentMethod) {
+      try {
+        const response = await fetch(`/store-order-details/${orderId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ selectedPaymentMethod }),
+        });
+  
+        if (!response.ok) {
+          console.error('Error storing order details:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error storing order details:', error);
+      }
+    }
+  
+    async function updateCartDetails() {
+  try {
+    const response = await fetch("/cart-details");
+    if (response.ok) {
+      const data = await response.json();
+      const orderTotalElement = document.getElementById("order-total-amount");
+
+      // Check if the data object contains the total property
+      if (data.hasOwnProperty("total")) {
+        // Update the order total amount, considering the coupon discount
+        const discountedTotal = data.total - (data.appliedCoupon?.discountAmount || 0);
+        orderTotalElement.textContent = `$${discountedTotal.toFixed(2)}`;
+      } else {
+        console.error("Invalid server response format");
+      }
+    } else {
+      console.error("Error fetching cart details:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error updating cart details:", error);
+  }
+}
+
+
+  
+    async function updateTotal() {
+      // Implement the updateTotal function if needed
+    }
+  });
+  async function applyCoupon() {
+    const couponCodeInput = document.getElementById('coupon-code');
+    const couponCode = couponCodeInput.value.trim();
+
+    try {
+        const response = await fetch('/apply-coupon', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ couponCode }),
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+
+            document.getElementById('coupon-feedback').textContent = data.message;
+        } else {
+            const data = await response.json();
+            // Update total with discounted amount
+            document.getElementById('total-amount').textContent = `$${data.discountedTotal.toFixed(2)}`;
+            // Display success message
+            document.getElementById('coupon-feedback').textContent = 'Coupon applied successfully';
+
+            // Hide the apply button and show the remove button
+            document.getElementById('remove-coupon-button').style.display = 'inline';
+            document.getElementById('apply-coupon-button').style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error applying coupon:', error);
+        // Display error message
+        document.getElementById('coupon-feedback').textContent = 'Error applying coupon';
+    }
+}
+
+// Inside removeCoupon function
+async function removeCoupon() {
+    try {
+        const response = await fetch('/remove-coupon', {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            // Update the total amount on the UI
+            document.getElementById('total-amount').textContent = `$${data.updatedTotal.toFixed(2)}`;
+
+            // Display success message
+            document.getElementById('coupon-feedback').textContent = 'Coupon removed successfully';
+
+            // Hide the remove button and show the apply button
+            document.getElementById('remove-coupon-button').style.display = 'none';
+            document.getElementById('apply-coupon-button').style.display = 'inline';
+
+            // Clear the coupon code input field
+            document.getElementById('coupon-code').value = '';
+        } else {
+            const data = await response.json();
+
+            // Display error message
+            document.getElementById('coupon-feedback').textContent = data.message;
+        }
+    } catch (error) {
+        console.error('Error removing coupon:', error);
+
+        
+        document.getElementById('coupon-feedback').textContent = 'Error removing coupon';
+    }
+}
+
+  </script>
+  
+  <%- include("footer.ejs") %>
+  
+  

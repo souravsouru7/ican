@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="/styles/add-product.css">
+<body>
+    <form action="/admin/dashboard/add-product" method="post" enctype="multipart/form-data">
+
+        <h1>Add Product</h1>
+
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="productName" required>
+
+        <label for="category">Category:</label>
+        <select id="category" name="categoryId" required>
+            <% categories.forEach(category => { %>
+            <option value="<%= category._id %>"><%= category.name %></option>
+            <% }); %>
+        </select>
+
+        <label for="regularPrice">Regular Price:</label>
+        <input type="number" id="regularPrice" name="regularPrice" required>
+
+        <label for="shirtSize">Shirt Size:</label>
+    <select id="shirtSize" name="shirtSize">
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+    </select>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required>
+
+        <label for="units">Units:</label>
+        <input type="text" id="units" name="units" required>
+
+        <label for="stockStatus">Stock Status:</label>
+        <select id="stockStatus" name="stockStatus" required>
+            <option value="In Stock">In Stock</option>
+            <option value="Out of Stock">Out of Stock</option>
+        </select>
+
+        <label for="productImage">Product Image:</label>
+        <input type="file" id="productImage" name="productImage" accept="image/*" required>
+
+        <button type="submit">Add Product</button>
+    </form>
+</body>
+
+</html>

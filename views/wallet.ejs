@@ -1,0 +1,205 @@
+<%- include("profile.ejs") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+    <title>Wallet</title>
+    <style>
+body, h1, h2, h3, p, ul {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+}
+
+#header {
+  
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+#wallet-content {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+p {
+    margin-bottom: 15px;
+}
+
+/* Add Funds Form */
+form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+label {
+    margin-bottom: 5px;
+}
+
+input {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+
+#referralForm {
+    display: flex;
+    flex-direction: column;
+}
+
+
+h2 {
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style: none;
+}
+
+li {
+    margin-bottom: 5px;
+}
+
+p {
+    color: green;
+    margin-top: 10px;
+}
+    </style>
+
+
+</head>
+<body>
+    <section id="header">
+        <!-- Header content if needed -->
+    </section>
+
+    <!-- Wallet content -->
+ <!-- views/wallet.ejs -->
+<!-- ... (existing code) -->
+<section id="wallet-content" class="container">
+    <p>Total Wallet Balance: <%= totalWalletBalance %></p>
+
+    <% if (typeof cancelledOrderAmount !== 'undefined') { %>
+        <p>Cancelled Order Amount: <%= cancelledOrderAmount %></p>
+    <% } %>
+    <% if (typeof newWalletBalance !== 'undefined') { %>
+        <p>New Wallet Balance: <%= newWalletBalance %></p>
+    <% } %>
+
+    <!-- Display Wallet History -->
+    <div>
+        <h2>Wallet History</h2>
+        <ul>
+            <% for (const transaction of walletHistory) { %>
+                <li><%= transaction.type === 'add' ? 'Added' : 'Reduced' %> <%= transaction.amount %></li>
+            <% } %>
+        </ul>
+    </div>
+
+    <!-- Add Funds Form -->
+    <form class="form-group" action="/wallet/add-funds" method="POST">
+        <label for="amount">Add Funds:</label>
+        <input class="input-field" type="number" name="amount" step="0.01" required>
+        <button class="submit-button" type="submit">Add Funds</button>
+    </form>
+    <!-- Referral Code Form -->
+   <form id="referralForm" class="form-group referral-form" action="/wallet/add-referral-bonus" method="POST">
+        <label for="referralCode">Referral Code:</label>
+        <input class="input-field" type="text" name="referralCode" required>
+        <button class="submit-button" type="button" onclick="addReferralBonus()">Add Referral Bonus</button>
+    </form>
+    
+</section>
+
+<!-- ... (existing code) -->
+
+
+    </section>
+<!-- ... (existing code) -->
+
+<script>
+ async function addReferralBonus() {
+        const referralCodeInput = document.querySelector('input[name="referralCode"]');
+        const referralCode = referralCodeInput.value.trim();
+
+        if (!referralCode) {
+            alert('Please enter a referral code.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/wallet/add-referral-bonus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ referralCode }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                // Display success message briefly
+                const successMessage = document.createElement('p');
+                successMessage.textContent = 'Referral bonus added successfully.';
+                document.getElementById('wallet-content').appendChild(successMessage);
+
+
+                referralCodeInput.value = '';
+
+               
+                setTimeout(() => {
+                    successMessage.remove();
+                    
+                    location.reload();
+                }, 1000);
+            } else {
+                const errorData = await response.json();
+                const errorMessage = errorData.error;
+
+                if (errorMessage === 'Referral code already used.') {
+                    alert(errorMessage);
+                } else {
+                    // Handle other error cases
+                    alert('An unexpected error occurred.');
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            alert('An unexpected error occurred.');
+        }
+    }
+</script>
+
+<!-- ... (existing code) -->
+
+    
+</body>
+</html>

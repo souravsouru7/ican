@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/dashboard.css">
+    <title>Admin Dashboard</title>
+    <!-- Add this in the <head> section of your HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<%- include("adminheader.ejs") %>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-container">
+            <header>
+            </header>
+            <section id="product-management">
+                <h2>Overview</h2>
+                <h1>Sales Chart</h1>
+                <!-- Filter dropdown -->
+                <select id="filter" onchange="updateSelectedChart()">
+                    <option value="daily" selected>Daily</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+
+                <!-- Daily Sales Chart -->
+                <canvas id="dailyChart" width="800" height="400"></canvas>
+
+                <!-- Monthly Sales Chart -->
+                <canvas id="monthlyChart" width="800" height="400" style="display: none;"></canvas>
+
+                <!-- Yearly Sales Chart -->
+                <canvas id="yearlyChart" width="800" height="400" style="display: none;"></canvas>
+            </section>
+        </div>
+        <section id="category-sales">
+            <h2>Category Sales Chart</h2>
+            <canvas id="categorySalesChart" width="800" height="400"></canvas>
+        </section>
+        <section>
+            <h2>product Quantity</h2>
+            <!-- Product Sales Chart -->
+            <canvas id="productSalesChart" width="800" height="400"></canvas>
+
+        </section>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fetch initial data and update charts
+            updateSelectedChart();
+            updateCategorySalesChart();
+             updateProductSalesChart();
+        });
+
+        async function updateSelectedChart() {
+            const selectedFilter = document.getElementById('filter').value;
+
+            if (selectedFilter === 'daily') {
+                hideChart('monthlyChart');
+                hideChart('yearlyChart');
+                showChart('dailyChart');
+                updateDailyChart();
+            } else if (selectedFilter === 'monthly') {
+                hideChart('dailyChart');
+                hideChart('yearlyChart');
+                showChart('monthlyChart');
+                updateMonthlyChart();
+            } else if (selectedFilter === 'yearly') {
+                hideChart('dailyChart');
+                hideChart('monthlyChart');
+                showChart('yearlyChart');
+                updateYearlyChart();
+            }
+        }
+
+        async function updateDailyChart() {
+            const response = await fetch('/api/sales-data?filter=daily');
+            const data = await response.json();
+            clearSalesChart('dailyChart');
+            updateSalesChart('dailyChart', data);
+        }
+
+        async function updateMonthlyChart() {
+            const response = await fetch('/api/sales-data?filter=monthly');
+            const data = await response.json();
+            clearSalesChart('monthlyChart');
+            updateSalesChart('monthlyChart', data);
+        }
+
+        async function updateYearlyChart() {
+            const response = await fetch('/api/sales-data?filter=yearly');
+            const data = await response.json();
+            clearSalesChart('yearlyChart');
+            updateSalesChart('yearlyChart', data);
+        }
+
+        function clearSalesChart(chartId) {
+            const canvas = document.getElementById(chartId);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function updateSalesChart(chartId, data) {
+            const ctx = document.getElementById(chartId).getContext('2d');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Total Sales',
+                        data: data.sales,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                    }],
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'category',
+                        },
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        }
+        const productSalesChart = document.getElementById('productSalesChart');
+
+// Fetch and update product sales chart
+async function updateProductSalesChart() {
+    try {
+        const response = await fetch('/api/product-sales-data');
+        const data = await response.json();
+
+        clearProductSalesChart();
+        updateProductSalesChartGraph(data);
+    } catch (error) {
+        console.error('Error fetching product sales data:', error);
+    }
+}
+
+function clearProductSalesChart() {
+    const ctx = productSalesChart.getContext('2d');
+    ctx.clearRect(0, 0, productSalesChart.width, productSalesChart.height);
+}
+
+function updateProductSalesChartGraph(data) {
+    const ctx = productSalesChart.getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Product Sales',
+                data: data.sales,
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+            }],
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'category',
+                },
+                y: {
+                    beginAtZero: true,
+                },
+            },
+        },
+    });
+}
+        document.getElementById('downloadButton').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/admin/dashboard/sales-report', {
+                    method: 'GET',
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+
+                    // Create a temporary link element
+                    const link = document.createElement('a');
+
+                    link.href = window.URL.createObjectURL(blob);
+
+                    // Specify the filename for the download
+                    link.download = 'sales_report.xlsx';
+
+                    // Append the link to the document
+                    document.body.appendChild(link);
+
+                    // Trigger a click event on the link to start the download
+                    link.click();
+
+                    // Remove the link from the document
+                    document.body.removeChild(link);
+                } else {
+                    // Handle the error (e.g., display an error message)
+                    console.error('Failed to download sales report:', response.statusText);
+                }
+            } catch (error) {
+                // Handle network or other errors
+                console.error('Error downloading sales report:', error);
+            }
+        });
+
+        async function updateCategorySalesChart() {
+            try {
+                const response = await fetch('/api/category-sales-data');
+                const data = await response.json();
+
+                clearCategorySalesChart();
+                updateCategorySalesChartGraph(data);
+            } catch (error) {
+                console.error('Error fetching category sales data:', error);
+            }
+        }
+
+        function clearCategorySalesChart() {
+            const canvas = document.getElementById('categorySalesChart');
+            const ctx = canvas.getContext('2d');
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function updateCategorySalesChartGraph(data) {
+            const ctx = document.getElementById('categorySalesChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Total Sales',
+                        data: data.sales,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                    }],
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'category',
+                        },
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        }
+
+        function hideChart(chartId) {
+            const chart = document.getElementById(chartId);
+            chart.style.display = 'none';
+        }
+
+        function showChart(chartId) {
+            const chart = document.getElementById(chartId);
+            chart.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

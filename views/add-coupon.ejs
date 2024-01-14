@@ -1,0 +1,43 @@
+<!-- views/add-coupon.ejs -->
+
+<%- include("adminheader.ejs") %>
+<link rel="stylesheet" href="/styles/form.css">
+<style>
+    body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url('/img/blog/coupon.png') center/cover fixed no-repeat;
+    position: relative;
+    height: 100vh;
+    background-position: center;
+}
+
+</style>
+<section id="page-header2" class="adminbanner">
+    <h2>Add Coupon</h2>
+</section>
+<div id="overlay"></div>
+<section id="admin-content" class="section-p1">
+    <div class="form-container">
+        <form action="/admin/dashboard/add-coupon" method="post">
+            <div class="form-group">
+                <label for="code">Coupon Code</label>
+                <input type="text" id="code" name="code" required>
+            </div>
+            <div class="form-group">
+                <label for="discountPercentage">Discount Percentage</label>
+                <input type="number" id="discountPercentage" name="discountPercentage" min="0" max="100" required>
+            </div>
+            <div class="form-group">
+                <label for="expiryDate">Expiry Date</label>
+                <input type="date" id="expiryDate" name="expiryDate" required>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="normal">Add Coupon</button>
+            </div>
+        </form>
+    </div>
+    
+</section>
+

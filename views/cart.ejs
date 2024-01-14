@@ -1,0 +1,222 @@
+<%- include("header.ejs") %>
+<link rel="stylesheet" href="styles/shop.css" />
+<section id="page-header2" class="cartbanner">
+  <h2>#let's_talk</h2>
+  <p>LEAVE A MESSAGE, We love to hear from you!</p>
+</section>
+<section id="cart" class="section-p1">
+  <table width="100%">
+    <thead>
+      <tr>
+        <td>Remove</td>
+        <td>Image</td>
+        <td>Product</td>
+        <td>Price</td>
+        <td>Quantity</td>
+        <td>Subtotal</td>
+      </tr>
+    </thead>
+    <tbody>
+      <% products.forEach(product => { %>
+      <tr>
+        <td>
+          <a
+            href="#"
+            onclick="removeFromCart('<%= product._id %>'); return false;"
+          >
+            <i class="fa-solid fa-trash"></i>
+          </a>
+        </td>
+        <td>
+          <img
+            src="/uploads/<%= product.productImage %>"
+            alt="<%= product.productName %> Image"
+          />
+        </td>
+        <td><%= product.productName %></td>
+        <td>
+          <% if (product.regularPrice !== undefined) { %>
+            RS <%= product.regularPrice.toFixed(2) %>
+          <% } else { %>
+            Price not available
+          <% } %>
+        </td>
+        <td>
+          <input
+            type="number"
+            value="<%= product.quantity %>"
+            data-product-id="<%= product._id %>"
+            data-price="<%= product.regularPrice !== undefined ? product.regularPrice.toFixed(2) : '' %>"
+            onchange="updateSubtotalAndTotal(this)"
+          />
+        </td>
+        <td id="subtotal_<%= product._id %>">
+          <% if (product.regularPrice !== undefined) { %>
+            <%= (product.quantity * product.regularPrice).toFixed(2) %>
+          <% } else { %>
+            Subtotal not available
+          <% } %>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</section>
+<!-- rest of the template -->
+
+
+<section id="cart-add" class="section-p1">
+ 
+  <div id="Subtotal">
+    <h3>Cart Total</h3>
+    <table>
+      <tr>
+        <td>cart Subtotal</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Shipping</td>
+        <td>Free</td>
+      </tr>
+    <!-- Inside your HTML -->
+
+  <tr id="total-row">
+      <td><strong>Total</strong></td>
+      <td id="cart-total"><span id="total-amount">0.00</span></td>
+  </tr>
+  
+  
+      
+    </table>
+    <a href="/delivery-address"
+      ><button class="normal">Proceed to checkout</button></a
+    >
+  </div>
+</section>
+<script>
+// Inside your script
+// Inside your script
+
+
+ document.addEventListener("DOMContentLoaded", async function () {
+  const productRows = document.querySelectorAll('[id^="subtotal_"]');
+  productRows.forEach((row) => {
+    row.dataset.previousSubtotal = row.textContent.trim();
+  });
+
+  const quantityInputs = document.querySelectorAll("[data-price]");
+  quantityInputs.forEach((input) => {
+    input.addEventListener("change", function () {
+      updateSubtotalAndTotal(this);
+    });
+  });
+
+  const removeButtons = document.querySelectorAll(".fa-trash");
+  removeButtons.forEach((button) => {
+    button.addEventListener("click", handleRemoveProduct);
+  });
+
+  // Update cart details and total on page load
+  await updateCartDetails();
+  updateTotal();
+});
+
+async function updateSubtotalAndTotal(input) {
+  const quantityInputValue = input.value.trim();
+  if (!quantityInputValue || isNaN(quantityInputValue)) {
+    return;
+  }
+
+  const quantity = parseInt(quantityInputValue);
+  const price = parseFloat(input.getAttribute("data-price"));
+  const productId = input.getAttribute("data-product-id");
+  const subtotalElement = document.getElementById(`subtotal_${productId}`);
+
+  if (!subtotalElement.dataset.previousSubtotal) {
+    subtotalElement.dataset.previousSubtotal = subtotalElement.textContent;
+  }
+
+  const previousSubtotal = parseFloat(
+    subtotalElement.dataset.previousSubtotal
+  );
+  const subtotal = (quantity * price).toFixed(2);
+
+  subtotalElement.dataset.previousSubtotal = subtotal;
+  subtotalElement.textContent = `${subtotal}`;
+
+  // Update cart details on the server
+  await updateCartDetails(productId, quantity);
+
+  // After updating cart details, update the total
+  await updateTotal();
+}
+
+async function updateCartDetails(productId, quantity) {
+  try {
+    const response = await fetch("/update-cart-details", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ productId, quantity }),
+    });
+
+    if (!response.ok) {
+      console.error("Error updating cart details:", response.statusText);
+    } else {
+      // After updating cart details, update the total
+      updateTotal();
+    }
+  } catch (error) {
+    console.error("Error updating cart details:", error);
+  }
+}
+
+
+async function updateTotal() {
+  try {
+    const response = await fetch("/cart-details");
+    if (response.ok) {
+      const data = await response.json();
+      const cartTotalElement = document.getElementById("cart-total");
+      const totalAmountElement = document.getElementById("total-amount");
+
+      // Check if the data object contains the total property
+      if (data.hasOwnProperty("total")) {
+        // Update the total amount without applying the coupon
+        totalAmountElement.textContent = `${data.total.toFixed(2)}`;
+      } else {
+        console.error("Invalid server response format");
+      }
+    } else {
+      console.error("Error fetching cart details:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error updating total:", error);
+  }
+}
+
+
+
+const handleRemoveProduct = async (event) => {
+  const productId = event.target
+    .closest("tr")
+    .querySelector("td:nth-child(6)")
+    .id.split("_")[1];
+
+  const response = await fetch(`/remove-from-cart/${productId}`, {
+    method: "DELETE",
+  });
+
+  if (response.ok) {
+    const productRow = event.target.closest("tr");
+    productRow.parentNode.removeChild(productRow);
+    await updateTotal(); // Update total after removing a product
+  } else {
+    console.error("Error removing product from cart:", response.statusText);
+  }
+};
+
+</script>
+
+<%- include("footer.ejs") %>

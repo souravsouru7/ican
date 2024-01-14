@@ -1,0 +1,38 @@
+<!-- views/admin.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sign In</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <link rel="stylesheet" href="/styles/admin.css">
+</head>
+<body>
+    <div class="container">
+        <div class="wrapper">
+            <div class="title"><span>Admin Sign In</span></div>
+
+            <% if (locals.error) { %>
+                <p style="color: red;"><%= locals.error %></p>
+            <% } %>
+
+            <form action="/adminLogin" method="post">
+                <div class="row">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" name="username" placeholder="Email or Phone" required>
+                </div>
+                <div class="row">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                </div>
+               
+                <div class="row button">
+                    <button type="submit">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!-- editAddress.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/styles/edit-adress.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('form').addEventListener('submit', function (event) {
+                if (!validateForm()) {
+                    event.preventDefault(); // Prevent the form from submitting if validation fails
+                }
+            });
+
+            function validateForm() {
+                var street = document.getElementById('street').value;
+                var city = document.getElementById('city').value;
+                var state = document.getElementById('state').value;
+                var zipCode = document.getElementById('zipCode').value;
+                var country = document.getElementById('country').value;
+
+                var isValid = true; // Initialize isValid to true
+
+                isValid = validateField(street, 'streetError', 'Street is required') && isValid;
+                isValid = validateField(city, 'cityError', 'City is required') && isValid;
+                isValid = validateField(state, 'stateError', 'State is required') && isValid;
+                isValid = validateField(zipCode, 'zipCodeError', 'Zip Code must be a number') && isValid;
+                isValid = validateField(country, 'countryError', 'Country is required') && isValid;
+
+                return isValid; // Return true if the form is valid
+            }
+
+            function validateField(value, elementId, errorMessage) {
+                var errorElement = document.getElementById(elementId);
+                if (value === "") {
+                    errorElement.innerHTML = errorMessage;
+                    errorElement.style.color = 'red';
+                    return false;
+                } else {
+                    errorElement.innerHTML = '';
+
+                    // Additional validation for ZIP Code to check if it's a number
+                    if (elementId === 'zipCodeError' && !(/^\d+$/.test(value))) {
+                        errorElement.innerHTML = 'Zip Code must be a number';
+                        errorElement.style.color = 'red';
+                        return false;
+                    }
+
+                    return true;
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1><%= title %></h1>
+
+    <h2>Edit Address</h2>
+
+    <form action="/profile/address/edit/<%= address._id %>" method="POST">
+
+        <!-- Include a CSRF token for security -->
+
+        <label for="street">Street:</label>
+        <input type="text" id="street" name="street" value="<%= address.street %>" >
+        <div id="streetError" class="error-message"></div>
+
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" value="<%= address.city %>">
+        <div id="cityError" class="error-message"></div>
+
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" value="<%= address.state %>">
+        <div id="stateError" class="error-message"></div>
+
+        <label for="zipCode">Zip Code:</label>
+        <input type="text" id="zipCode" name="zipCode" value="<%= address.zipCode %>">
+        <div id="zipCodeError" class="error-message"></div>
+
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country" value="<%= address.country %>">
+        <div id="countryError" class="error-message"></div>
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <a href="/profile/address">Cancel</a>
+</body>
+</html>

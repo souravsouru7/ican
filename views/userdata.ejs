@@ -1,0 +1,132 @@
+<%- include("profile.ejs") %><!-- userdata.ejs -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #3498db;
+            text-align: center;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            text-decoration: none;
+            background-color: #3498db;
+            color: #fff;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #207bb2;
+        }
+
+        button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #c0392b;
+        }
+
+        /* Styling for Available Coupons */
+        h2 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        ul.coupon-list {
+            padding-left: 20px;
+        }
+
+        .coupon-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .coupon-item p {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1><%= title %></h1>
+     
+        <ul>
+            <li>Name: <%= user.name %></li>
+            <li>Email: <%= user.email %></li>
+            <li>Mobile: <%= user.mobile || 'Not provided' %></li>
+            <li>Last Name: <%= user.lastName || 'Not provided' %></li>
+            <li>Age: <%= user.age || 'Not provided' %></li>
+            <li>Gender: <%= user.gender || 'Not provided' %></li>
+            <% if (user.referralCode) { %>
+                <li>Referral Code: <%= user.referralCode %></li>
+            <% } else { %>
+                <li>No Referral Code available</li>
+            <% } %>
+        </ul>
+
+        <h2>Available Coupons</h2>
+        <ul class="coupon-list">
+            <% validCoupons.forEach((coupon) => { %>
+                <li class="coupon-item">
+                    <p>Coupon Code: <%= coupon.code %></p>
+                    <p>Discount: <%= coupon.discountPercentage %>%</p>
+                    <p>Expiry Date: <%= coupon.expiryDate %></p>
+                </li>
+            <% }); %>
+        </ul>
+
+        <a class="btn" href="/profile/update">Update Details</a>
+        <a class="btn" href="/profile/change-password">Change Password</a>
+        <button type="button">Logout</button>
+    </div>
+</body>
+
+</html>

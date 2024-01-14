@@ -1,0 +1,85 @@
+<style>
+
+  #coupon-list {
+      margin: 20px;
+      background-color: #f0f0f0; /* Set background color for the entire coupon list section */
+      padding: 20px; /* Add padding for better visual appeal */
+  }
+
+  h2 {
+      text-align: center;
+      margin-bottom: 20px;
+  }
+
+  ul {
+      list-style-type: none;
+      padding: 0;
+  }
+
+  .lis {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #fff; /* Set background color for each coupon entry */
+  }
+
+  li span {
+      flex: 1;
+  }
+
+  .button-container {
+      display: flex;
+  }
+
+  .button-container a {
+      margin-right: 10px;
+      text-decoration: none;
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+      color: #333;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      transition: background-color 0.3s;
+  }
+
+  .button-container a:hover {
+      background-color: #ddd;
+  }
+
+  a[href="/admin/dashboard/add-coupon"] button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+  }
+</style>
+
+
+
+<%- include("adminheader.ejs") %>
+<section id="coupon-list" class="section-p1">
+    <h2>Coupon List</h2>
+    <ul>
+        <% coupons.forEach(coupon => { %>
+            <li class="lis">
+                <span><%= coupon.code %></span>
+                <span><%= coupon.discountPercentage %>% off</span>
+                <span>Expires: <%= coupon.expiryDate %></span>
+                <div class="button-container">
+                    <a href="/admin/dashboard/edit-coupon/<%= coupon._id %>">Edit</a>
+                    <a href="/admin/dashboard/delete-coupon/<%= coupon._id %>">Delete</a>
+                </div>
+            </li>
+        <% }); %>
+    </ul>
+    <a href="/admin/dashboard/add-coupon"><button>Add Coupon</button></a>
+</section>

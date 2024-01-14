@@ -1,0 +1,270 @@
+<%- include("header.ejs") %>
+<html>
+<head>
+  <style>
+    
+    :root {
+      --primary-color: #afb0b2;
+      --secondary-color: #a7aeb4;
+      --accent-color: #f39c12;
+      --white-color: #040505;
+      --black-color: #000000;
+      --font-family: Arial, sans-serif;
+    }
+
+    /* Reset the default styles for the elements */
+    * {
+      margin: 0;
+      padding: 0;
+      
+    }
+
+    /* Set the font and background for the body */
+    body {
+      font-family: var(--font-family);
+      background-color: #d2dcdc;
+    }
+
+    /* Create a container for the dashboard */
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Create a header for the dashboard */
+    .header {
+      height: 80px;
+      background-color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+
+    /* Style the logo and title in the header */
+    .logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-image: url("logo.png");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .title {
+      color: var(--white-color);
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    
+    .user {
+      display: flex;
+      align-items: center;
+    }
+
+    .user-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-image: url("user.png");
+      background-size: cover;
+      background-position: center;
+      margin-right: 10px;
+    }
+
+    .user-name {
+      color: var(--white-color);
+      font-size: 18px;
+    }
+
+
+    .sidebar {
+      width: 250px;
+      height: 100%;
+      background-color: var(--secondary-color);
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    /* Style the profile section in the sidebar */
+    .profile-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .profile-heading {
+      color: var(--white-color);
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .profile-picture {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      margin-bottom: 10px;
+    }
+
+    .profile-name {
+      color: var(--white-color);
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .profile-email {
+      color: var(--white-color);
+      font-size: 16px;
+    }
+
+    /* Style the profile links in the sidebar */
+    .profile-links {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-link {
+      color: var(--white-color);
+      font-size: 16px;
+      text-decoration: none;
+      padding: 10px;
+    }
+
+    .profile-link:hover {
+      background-color: var(--accent-color);
+    }
+
+    /* Create a main section for the dashboard */
+    .main {
+      width: 100%;
+      height: 100%;
+      margin-left: 250px;
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    /* Style the cards in the main section */
+    .card {
+      width: 300px;
+      height: 200px;
+      background-color: var(--white-color);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+    }
+
+    .card-heading {
+      color: var(--black-color);
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .card-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--accent-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+
+    .card-value {
+      color: var(--black-color);
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    /* Style the chart in the main section */
+    .chart {
+      width: 600px;
+      height: 400px;
+      background-color: var(--white-color);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Style the table in the main section */
+    .table {
+      width: 600px;
+      height: 400px;
+      background-color: var(--white-color);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .table-heading {
+      color: var(--black-color);
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px;
+    }
+
+    .table-content {
+      overflow-y: scroll;
+    }
+
+    .table-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid var(--secondary-color);
+    }
+
+    .table-cell {
+      color: var(--black-color);
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+   
+    <div class="sidebar">
+      <div class="profile-section">
+        <div class="profile-heading">User Profile</div>
+        <div class="profile-picture"></div>
+        
+      </div>
+      <div class="profile-links">
+        <a href="/profile/details" class="profile-link">User Details</a>
+        <a href="/profile/address" class="profile-link">Address</a>
+        <a href="/order-history" class="profile-link">My Orders</a>
+        <a href="/wishlist" class="profile-link">Wishlist</a>
+       
+      </div>
+    </div>
+   

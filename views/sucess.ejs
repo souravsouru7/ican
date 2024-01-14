@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Successful</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .check-mark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 5px solid #28a745;
+            position: relative;
+            transform: scale(0); /* Set the initial state to scale(0) */
+        }
+
+        svg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .check-mark.animate {
+            animation: checkmark 0.5s linear infinite;
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.5);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Order Successful</h1>
+        <div class="check-mark">
+            <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.75 31.25L30 42.5L41.25 31.25" stroke="#28a745" stroke-width="5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+        <p>Your order has been placed successfully! We will send you a confirmation email shortly.</p>
+        <a href="/" class="btn">Back to Home</a>
+    </div>
+
+    <script>
+        const checkMark = document.querySelector('.check-mark');
+
+        // Add a delay to the initial animation start to ensure the element is rendered
+        setTimeout(() => {
+            checkMark.classList.add('animate');
+        }, 100);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,184 @@
+<!-- views/order-history.ejs -->
+
+<%- include("profile.ejs") %>
+
+<style>
+  #order-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  #order-history-table th,
+  #order-history-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  #order-history-table th {
+    background-color: #f2f2f2;
+  }
+
+  #order-history-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  #order-history-list li {
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  #order-history-list li a {
+    display: inline-block;
+    margin-top: 10px;
+    text-decoration: none;
+    color: #3498db;
+    border-bottom: 1px solid #3498db;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+  }
+
+  #order-history-list li a:hover {
+    color: #207bb2;
+    border-bottom: 1px solid #207bb2;
+  }
+
+  .product-info {
+    display: flex;
+    align-items: center;
+  }
+
+  .product-image {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+  }
+  .cancelled {
+    color: #e74c3c; /* Red color for "Cancelled" status */
+    font-weight: bold;
+  }
+  .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .pagination ul {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+  }
+
+  .pagination li {
+    background-color: #898d91;
+    color: rgb(0, 0, 0);
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .pagination li.active {
+    background-color: #acbfac;
+  }
+</style>
+
+<div style="margin-bottom: 20px;">
+  <label for="orderStatusFilter" style="margin-right: 10px;">Filter by Status:</label>
+  <select id="orderStatusFilter" onchange="filterOrders(this.value)" style="padding: 5px;">
+    <option value="All">All</option>
+    <option value="Ordered">Ordered</option>
+    <option value="Shipped">Shipped</option>
+    <option value="Out for Delivery">Out for Delivery</option>
+    <option value="Delivered">Delivered</option>
+    <option value="Cancelled">Cancelled</option>
+  </select>
+    <label for="productSearch" style="margin-left: 20px; margin-right: 10px;">Search Product:</label>
+    <input type="text" id="productSearch" oninput="searchProducts(this.value)" style="padding: 5px;">
+    <button onclick="resetFilters()" style="padding: 5px; margin-left: 10px;">Reset</button>
+
+</div>
+
+
+<h2>Your Order History</h2>
+<table id="order-history-table">
+  <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Product</th>
+      <th>Total Amount</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="order-history-list">
+    <% orders.forEach(order => { %>
+      <tr data-status="<%= order.status %>">
+        <td><strong><%= order._id %></strong></td>
+        <td class="product-info">
+          <%= order.products[0].product.productName %>
+        </td>
+        <td><%= order.totalAmount %></td>
+        <td><%= order.status %></td>
+        <td><a href="/order/<%= order._id %>">View Details</a></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+<div class="pagination">
+  <% if (totalPages > 1) { %>
+    <ul>
+      <% if (currentPage > 1) { %>
+        <li>
+          <a href="/order-history?page=<%= currentPage - 1 %>">Previous</a>
+        </li>
+      <% } %>
+
+      <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+        <li <% if (currentPage === i) { %>class="active"<% } %>>
+          <a href="/order-history?page=<%= i %>"><%= i %></a>
+        </li>
+      <% } %>
+
+      <% if (currentPage < totalPages) { %>
+        <li>
+          <a href="/order-history?page=<%= currentPage + 1 %>">Next</a>
+        </li>
+      <% } %>
+    </ul>
+  <% } %>
+</div>
+
+<script>
+ function filterOrders(status) {
+    const rows = document.querySelectorAll('tr[data-status]');
+    rows.forEach(row => {
+      const rowStatus = row.getAttribute('data-status');
+      row.style.display = status === 'All' || rowStatus === status ? '' : 'none';
+    });
+  }
+
+  function searchProducts(query) {
+    const rows = document.querySelectorAll('tr[data-status]');
+    rows.forEach(row => {
+      const productName = row.querySelector('.product-info').textContent.toLowerCase();
+      row.style.display = productName.includes(query.toLowerCase()) ? '' : 'none';
+    });
+  }
+
+  function resetFilters() {
+    // Clear the search input
+    document.getElementById('productSearch').value = '';
+    // Reset status filter
+    const statusFilter = document.getElementById('orderStatusFilter');
+    statusFilter.value = 'All';
+    filterOrders(statusFilter.value);
+  }
+
+</script>
+
+<% include('footer.ejs') %>

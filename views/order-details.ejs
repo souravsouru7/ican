@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Details</title>
+  <link rel="stylesheet" href="/styles/order-details.css">
+ <!-- Link to your custom stylesheet -->
+ 
+  <style>
+    /* order-details.css */
+    body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  color: #495057;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+ 
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+h2 {
+  color: #007bff;
+}
+
+.action-buttons {
+  margin-bottom: 20px;
+}
+
+.btn {
+  margin-right: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.order-info {
+  margin-bottom: 20px;
+}
+
+.product-list table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.product-list th,
+.product-list td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+
+
+.product-list img {
+  max-width: 80px;
+  max-height: 80px;
+  border-radius: 8px;
+}
+
+.payment-method,
+.selected-address,
+.order-status {
+  margin-bottom: 20px;
+}
+
+.payment-method,
+.selected-address,
+.order-status {
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.payment-method strong,
+.selected-address strong,
+.order-status strong {
+  display: block;
+  font-size: 18px;
+  color: #343a40;
+}
+
+/* Define styles for different order statuses */
+.order-status-indicator {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.order-status-indicator.shipped {
+  background-color: #28a745; /* Green color for "Shipped" status */
+  color: #fff;
+}
+
+.order-status-indicator.delivered {
+  background-color: #007bff; /* Blue color for "Delivered" status */
+  color: #fff;
+}
+
+  </style>
+</head>
+<%- include("profile.ejs") %>
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h2>Order Details</h2>
+        <div class="action-buttons">
+          <% if (!order.isCancelled) { %>
+            <% if (order.status === 'Delivered') { %>
+              <button id="returnOrderBtn" class="btn btn-danger">Return Order</button>
+            <% } else { %>
+              <button id="cancelOrderBtn" class="btn btn-danger">Cancel Order</button>
+            <% } %>
+            <button id="downloadInvoiceBtn" class="btn btn-primary">Download Invoice</button>
+          <% } %>
+        </div>
+        <div class="order-info">
+          <strong>Order ID:</strong> <%= order._id %><br>
+          <strong>Total Amount:</strong> <%= order.totalAmount %><br>
+        </div>
+        <div class="product-list">
+          <strong>Products:</strong>
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Amount</th>
+                <th>Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% order.products.forEach(product => { %>
+                <tr>
+                  <td><%= product.product.productName %></td>
+                  <td><img src="/uploads/<%= product.product.productImage %>" alt="<%= product.product.productName %>" class="img-fluid"></td>
+                  <td><%= product.product.regularPrice %></td>
+                  <td><%= product.quantity %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="payment-method">
+    <strong>Payment Method:</strong> <%= order.paymentMethod %>
+  </div>
+  
+  <!-- Add this line after the payment-method div -->
+  <div class="selected-address">
+    <strong>Shipped Address:</strong>
+    <% if (order.selectedAddress) { %>
+      <%= order.selectedAddress.street %>, <%= order.selectedAddress.city %>, <%= order.selectedAddress.state %> - <%= order.selectedAddress.pincode %>, <%= order.selectedAddress.country %>
+    <% } else { %>
+      N/A
+    <% } %>
+  </div>
+<div class="order-status">
+  <strong>Status:</strong>
+  <% if (order.isCancelled && !order.isReturned) { %>
+    <span class="order-status-indicator cancelled">Cancelled</span>
+  <% } else if (order.isReturned && order.isCancelled) { %>
+    <span class="order-status-indicator returned">Returned</span>
+  <% } else { %>
+    <span class="order-status-indicator <%= order.status.toLowerCase() %>">
+      <%= order.status %>
+    </span>
+  <% } %>
+</div>
+<!-- Add this section after displaying payment method -->
+<div class="applied-coupon">
+  <% if (order.couponDetails) { %>
+    <strong>Applied Coupon:</strong> <%= order.couponDetails.code %> - <%= order.couponDetails.name %>
+  <% } else { %>
+    <strong>No Coupon Applied</strong>
+  <% } %>
+</div>
+
+
+
+
+</body>
+</html>
+
+
+
+
+<script>
+ document.addEventListener("DOMContentLoaded", function () {
+      const cancelOrderBtn = document.getElementById("cancelOrderBtn");
+      const returnOrderBtn = document.getElementById("returnOrderBtn");
+      const downloadInvoiceBtn = document.getElementById("downloadInvoiceBtn");
+
+      if (cancelOrderBtn) {
+  cancelOrderBtn.addEventListener("click", async function () {
+    const isConfirmed = confirm("Do you want to cancel this order?");
+    if (isConfirmed) {
+      await cancelOrder("<%= order._id %>", <%= order.totalAmount %>);
+      window.location.reload();
+    }
+  });
+}
+
+if (returnOrderBtn) {
+  returnOrderBtn.addEventListener("click", async function () {
+    const isConfirmed = confirm("Do you want to return this order?");
+    if (isConfirmed) {
+      await returnOrder("<%= order._id %>", <%= order.totalAmount %>);
+      window.location.reload();
+    }
+  });
+}
+
+
+      if (downloadInvoiceBtn) {
+        downloadInvoiceBtn.addEventListener("click", function () {
+          downloadInvoice("<%= order._id %>");
+        });
+      }
+
+      async function cancelOrder(orderId, totalAmount) {
+        try {
+          const response = await fetch(`/cancel-order/${orderId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ totalAmount }),
+          });
+
+          if (response.ok) {
+            try {
+              const responseData = await response.json();
+              console.log('Cancelled Order Amount:', responseData.cancelledOrderAmount);
+              console.log('New Wallet Balance:', responseData.newWalletBalance);
+
+              const updatedOrder = await fetch(`/get-order/${orderId}`);
+              if (updatedOrder.ok) {
+                const updatedOrderData = await updatedOrder.json();
+                updateOrderUI(updatedOrderData);
+              } else {
+                console.error('Error fetching updated order:', updatedOrder.statusText);
+              }
+            } catch (jsonError) {
+              console.error('Error parsing JSON:', jsonError);
+            }
+          } else {
+            console.error('Error cancelling order:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error cancelling order:', error);
+        }
+      }
+
+      async function returnOrder(orderId, totalAmount) {
+        try {
+          const response = await fetch(`/return-order/${orderId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ totalAmount }),
+          });
+
+          if (response.ok) {
+            try {
+              const responseData = await response.json();
+              console.log('Returned Order Amount:', responseData.returnedOrderAmount);
+              console.log('New Wallet Balance:', responseData.newWalletBalance);
+
+              const updatedOrder = await fetch(`/get-order/${orderId}`);
+              if (updatedOrder.ok) {
+                const updatedOrderData = await updatedOrder.json();
+                updateOrderUI(updatedOrderData);
+              } else {
+                console.error('Error fetching updated order:', updatedOrder.statusText);
+              }
+            } catch (jsonError) {
+              console.error('Error parsing JSON:', jsonError);
+            }
+          } else {
+            console.error('Error returning order:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error returning order:', error);
+        }
+      }
+    async function downloadInvoice(orderId) {
+      try {
+        const response = await fetch(`/download-invoice/${orderId}`, {
+          method: 'GET',
+        });
+
+        if (response.ok) {
+          // Create a Blob from the response and trigger download
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `invoice_${orderId}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        } else {
+          console.error('Error downloading invoice:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error downloading invoice:', error);
+      }
+    }
+
+    const reviewForms = document.querySelectorAll(".reviewForm");
+
+    reviewForms.forEach(form => {
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const userId = form.querySelector("#userId").value;
+        const rating = form.querySelector("#rating").value;
+        const text = form.querySelector("#reviewText").value;
+        const productId = "<%= product._id %>";
+
+        try {
+          const response = await fetch(`/products/${productId}/reviews`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId, rating, text }),
+          });
+
+          if (response.ok) {
+            // Show the review submission message
+            const reviewSubmissionMessage = form.querySelector("#reviewSubmissionMessage");
+            if (reviewSubmissionMessage) {
+              reviewSubmissionMessage.style.display = "block";
+            }
+
+            // Optionally, you can reload the page to update the displayed reviews
+          } else {
+            console.error('Error submitting review:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error submitting review:', error);
+        }
+      });
+    });
+  });
+</script>
+
+
+<% include('footer.ejs') %>

@@ -1,0 +1,59 @@
+<link rel="stylesheet" href="/styles/editproduct.css">
+
+<body>
+    <form action="/admin/dashboard/edit-product/<%= product._id %>" method="post" enctype="multipart/form-data">
+
+        <h1>Edit Product</h1>
+
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="productName" value="<%= product.productName %>" required>
+
+        <label for="category">Category:</label>
+        <select id="category" name="categoryId" required>
+            <% categories.forEach(category => { %>
+            <option value="<%= category._id %>"><%= category.name %></option>
+            <% }); %>
+        </select>
+
+        <label for="regularPrice">Regular Price:</label>
+        <input type="number" id="regularPrice" name="regularPrice" value="<%= product.regularPrice %>" required>
+        <select id="shirtSize" name="shirtSize">
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+        </select>
+        <!-- Include other fields for editing -->
+        <!-- For example: -->
+        <label for="salesPrice">Sales Price:</label>
+        <input type="number" id="salesPrice" name="salesPrice" value="<%= product.salesPrice %>">
+
+        <label for="stockStatus">Stock Status:</label>
+        <select id="stockStatus" name="stockStatus" required>
+            <option value="In Stock" <%= product.stockStatus === 'In Stock' ? 'selected' : '' %>>In Stock</option>
+            <option value="Out of Stock" <%= product.stockStatus === 'Out of Stock' ? 'selected' : '' %>>Out of Stock
+            </option>
+        </select>
+        <label for="offerPrice">Offer Price:</label>
+        <input type="number" id="offerPrice" name="offerPrice" value="<%= product.offerPrice %>">
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" value="<%= product.quantity %>" required>
+
+       
+
+        <!-- Add image upload functionality -->
+        <label for="productImage">Product Image:</label>
+        <input type="file" id="productImage" name="productImage">
+        <div>
+            <label>Current Product Image:</label>
+            <img src="/uploads/<%= product.productImage %>" alt="<%= product.productName %>" class="img-preview">
+        </div>
+
+
+        <button type="submit">Update Product</button>
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,1334 @@
+
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Spartan:wght@100;200;300;400;500;600;700;800;900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Spartan", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Global Styles */
+
+h1 {
+  font-size: 50px;
+  line-height: 64px;
+  color: #222;
+}
+
+h2 {
+  font-size: 46px;
+  line-height: 54px;
+  color: #222;
+}
+
+h4 {
+  font-size: 20px;
+  color: #222;
+}
+
+h6 {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+p {
+  font-size: 16px;
+  color: #465b52;
+  margin: 15px 0 20px 0;
+}
+
+.section-p1 {
+  padding: 40px 80px;
+}
+
+.section-m1 {
+  margin: 40px 0;
+}
+button.normal{
+    font-size: 14px;
+    font-weight: 600;
+    padding:  15px 30px;
+    color: #000;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: 0.2s;
+}
+button.white{
+    font-size: 13px;
+    font-weight: 600;
+    padding:  11px 18px;
+    color: #fff;
+    background-color: transparent;
+    cursor: pointer;
+    border: 1px solid #fff;
+    outline: none;
+    transition: 0.2s;
+}
+
+body {
+  width: 100%;
+}
+
+#header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 80px;
+    background-color: #E3E6F3;
+    box-shadow: 0 5px 15px rgb(0, 0,0,0.06);
+    z-index: 999;
+    position: sticky;
+    top: 0;
+    left: 0;
+}
+#mobile{
+    display: none;
+    align-items: center;
+}
+
+#navbar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+}
+#navbar li {
+    list-style: none;
+    padding: 0 20px;
+    position: relative;
+
+}
+#navbar li a{
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    transition: 0.3s ease;
+}
+#navbar li a:hover,
+#navbar li a.active{
+    color: #088178;
+}
+#close{
+    display: none;
+}
+#hero{
+    background-image: url(img/hero4.png);
+    height: 90vh;
+    width: 100%;
+    background-position: top 25% right 0;
+    padding: 0 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+#hero h4{
+    padding-bottom: 15px;
+
+}
+#hero h1{
+    color: #088178;
+
+    
+}
+#hero button{
+    background-image: url(img/button.png);
+    background-color: transparent;
+    border: 0;
+    padding: 14px 80px 14px 65px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 15px;
+
+}
+#feature{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+#feature .fe-box{
+    width: 180px;
+    text-align: center;
+    padding: 25px 15px;
+    box-shadow: 20px 20px 34px rgb(0, 0, 0,0.03);
+    border: 1px solid #cce7d0;
+    border-radius: 4px;
+    margin: 15px 0;
+}
+#feature .fe-box:hover{
+    box-shadow: 10px 10px 54px rgb(0, 0, 0,0.01);
+
+
+}
+
+#feature .fe-box img{
+    width: 100%;
+    margin-bottom: 10px;
+}
+#feature .fe-box h6{
+    display: inline-block;
+    padding: 9px 8px 6px 8px;
+    line-height: 1;
+    border-radius: 4px;
+    color: #088178;
+    background-color: #fddde4;
+}
+#feature .fe-box:nth-child(2)h6{
+    background-color: #cdebbc;
+}
+#feature .fe-box:nth-child(3)h6{
+    background-color: #d1e8f2;
+}
+
+#product1 .pro-container{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+    flex-wrap: wrap;
+}
+#product1{
+    text-align: center;
+
+}
+#product1 .pro{
+    width: 23%;
+    min-width: 250px;
+    padding: 10px 12px;
+    border: 1px solid #cce7d0;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.03);
+    margin: 15px 0;
+    transition: 0.2s ease;
+    position: relative;
+}
+#product1 .pro:hover{
+    box-shadow: 20px 20px 30px rgba(0,0, 0, 0.06);
+
+}
+#product1 .pro img{
+    width: 100%;
+    border-radius: 20px;
+
+}
+#product1 .pro .des{
+    text-align: start;
+    padding: 10px 0;
+}
+#product1 .pro .des span{
+    color: #606063;
+    font-size: 12px;
+
+
+
+}
+#product1 .pro .des h5{
+    padding-top: 7px;
+    color: #1a1a1a;
+    font-size: 14px;
+
+}
+#product1 .pro .des i{
+    font-size: 12px;
+    color: rgb(243, 181, 25);
+}
+#product1 .pro .des h4{
+    padding-top: 7px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #088178;
+}
+
+#product1 .pro .cart {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50px;
+    background-color: #e8f6ea;
+    font-weight: 500;
+    color: #088178;
+    border:  1px solid #cce7d0;
+    position: absolute;
+    bottom: 20px;
+    right: 10px;
+}
+#banner{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-image: url("img/banner/b2.jpg");
+    width: 100%;
+    height: 40vh;
+    background-size: cover;
+    background-position: center;
+
+}
+#banner h4{
+    color: white;
+    font-size: 16px;
+
+}
+#banner h2{
+    color: #fff;
+    font-size: 30px;
+    padding: 10px 0;
+    
+}
+#banner h2 span{
+    color: red;
+}
+#banner button:hover{
+    background-color: #088178;
+    color: #fff;
+}
+#sm-banner{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.banner-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+   
+    background-image: url("img/banner/b17.jpg");
+    min-width: 660px;
+    height: 50vh;
+    background-size: cover;
+    background-position: center;
+    padding: 30px;
+
+}
+.banner-box h4{
+    color: #fff;
+    font-size: 20px;
+    font-weight: 300;
+}
+.banner-box h2{
+    color: #fff;
+    font-size: 28px;
+    font-weight: 800;
+
+}
+.banner-box span{
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    padding-bottom: 15px;
+
+}
+.banner-box:hover button{
+    background-color: #088178;
+    border: 1px solid #088178;
+
+}
+.banner-box2{
+    background-image: url(img/banner/b10.jpg);
+}
+#banner3{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 0 80px;
+
+}
+.banner-box1{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    background-image: url("img/banner/b7.jpg");
+    min-width: 30%;
+    height: 30vh;
+    background-size: cover;
+    background-position: center;
+    padding: 20px;
+    margin-bottom: 20px;
+
+
+}
+.banner-box1 h2{
+    color: #fff;
+    font-weight: 900;
+    font-size: 23px;
+
+}
+.banner-box1 h3{
+    color: #ec544e;
+    font-weight: 800;
+    font-size: 15px;
+}
+.bannerbox12{
+    background-image: url(img/banner/b4.jpg);
+
+}
+.bannerbox13{
+    background-image: url(img/banner/b18.jpg);
+    
+}
+#newsletter{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    background-image: url(img/banner/b14.png);
+    background-repeat: no-repeat;
+    background-position: 20% 30%;
+    background-color: #041e42;
+
+}
+#newsletter h4{
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+}
+#newsletter p{
+    font-size: 14px;
+    font-weight: 600;
+    color: #818ea0;
+}
+
+#newsletter p span{
+    color: #ffbd27;
+
+
+
+}
+.form{
+    display: flex;
+    width: 40%;
+
+}
+#newsletter input{
+    height: 3.125rem;
+    padding: 0 1.25em;
+    font-size: 14px;
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    outline: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+}
+#newsletter button{
+    background-color: #088178;
+    color: #fff;
+    white-space: nowrap;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+footer{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+footer .col{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+footer .logo{
+    margin-bottom: 30px;
+
+}
+footer h4{
+    font-size: 13px;
+    padding-bottom: 20px;
+
+
+}
+footer p{
+    font-size: 13px;
+    margin: 0 0 8px 0;
+
+}
+footer a{
+    font-size: 13px;
+    text-decoration: none;
+    color: #222;
+    margin-bottom: 10px;
+}
+footer .follow{
+    color: #465b52;
+    padding-right: 4px;
+    cursor: pointer;
+}
+
+footer .install .row img{
+    border: 1px solid #088178;
+    border-radius: 6px;
+
+}
+footer .install img{
+    margin: 10px 0 15px 0;
+
+}
+
+footer .follow i :hover,
+footer a:hover{
+    color: #088178;
+}
+
+@media(max-width:799px){
+    .section-p1{
+        padding: 40px 40px;
+    }
+    #navbar{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        position: fixed;
+        top:0;
+        right: -300px;
+        height: 100vh;
+        width: 300px;
+        background-color: #E3E6F3;
+        box-shadow: 0 4px 60px rgba(0, 0, 0, 0.1);
+        padding: 80px 0 0 10px;
+    }
+    #navbar.active{
+        right: 0px;
+    }
+    #navbar li{
+        margin-bottom: 25px;
+
+
+    }
+    #mobile{
+        display: flex;
+        align-items: center;
+    }
+    #mobile i{
+        color: #1a1a1a;
+        font-size: 24px;
+        padding-left: 20px;
+
+    }
+    #close{
+        display: initial;
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        color: #222;
+        font-size: 24px;
+    }
+    #lg-bag{
+        display: none;
+    }
+    #hero{
+      
+        height: 70vh;
+        padding: 0 80px;
+        background-position: top 30% right 30%;
+    }
+    #feature{
+      
+        justify-content: center;
+        
+    }
+    #feature .fe-box{
+       
+        margin: 15px 15px;
+    }
+    #product1 .pro-container{
+       
+        justify-content: center;
+      
+    }
+    #product1 .pro{
+  
+        margin: 15px ;
+       
+    }
+    #banner{
+
+        height: 20vh;}
+
+        .banner-box {
+
+            min-width: 100%;
+            height: 30vh;
+        }
+        #banner3{
+            padding: 0 40px;
+        }
+
+        .banner-box1{
+            width: 28%;
+        }
+}
+@media(max-width:477px){
+    #header{
+        padding: 10px 30px;
+
+    }
+    #hero{
+        padding: 0 20px;
+        background-position: 55%;
+
+    }
+    h2{
+        font-size: 32px;
+    }
+    h1{
+        font-size: 38px;
+    }
+    .section-p1{
+        padding: 20px;
+    }
+}
+/*page section*/
+#page-header{
+    background-image: url(../img/banner/b1.jpg);
+    width: 100%;
+    height: 40vh;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    padding: 14px;
+
+}
+
+#page-header h2{
+    color: #fff;
+
+}
+
+#page-header p{
+    color: #fff;
+
+}
+
+#pagination{
+    text-align: center;
+
+}
+#pagination a {
+    text-decoration: none;
+    background-color: #088178;
+    padding: 15px 20px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 600;
+}
+
+#pagination a i{
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#prodetails .singleproimg{
+    width: 40%;
+    margin-right: 50px;
+
+}
+.small-img-group{
+    display: flex;
+    justify-content: space-between;
+
+}
+.small-imgcoloum{
+    flex-basis: 24%;
+    cursor: pointer;
+
+}
+#prodetails{
+    display: flex;
+    margin-top: 20px;
+}
+
+#prodetails .single-pro-details{
+    width: 50%;
+    padding-top: 30px;
+}
+#prodetails .single-pro-details h4{
+    padding: 40px 0 20px 0;
+
+}
+#prodetails .single-pro-details h2{
+    font-size: 26px;
+    
+}
+#prodetails .single-pro-details select{
+    display: block;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+
+}
+
+#prodetails .single-pro-details input{
+        width: 50px;
+        height: 47px;
+        padding-left: 10px;
+        font-size: 16px;
+        margin-right: 10px;
+
+}
+#btn{
+    background-color: #088178;
+    color: #fff;
+    
+}
+
+#prodetails .single-pro-details input:focus{
+    outline: none;
+}
+
+#prodetails .single-pro-details span{
+    line-height: 5px;
+    
+}
+
+
+
+
+
+
+
+
+
+
+/* Add styles for the new sidebar section */
+#sidebar {
+    width: 20%;
+    float: left;
+    padding: 20px;
+  
+}
+
+.filter-section {
+    margin-bottom: 25px;
+}
+
+.filter-section label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.filter-section select,
+.filter-section input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+#price-display {
+    display: inline-block;
+    margin-left: 10px;
+}
+.cate{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    line-height: 38px;
+}
+.cate a{
+    text-decoration: none;
+    color: #000;
+    font-weight: 700;
+}
+/* Add styles for the new radio buttons */
+.filter-section input[type="radio"] {
+    margin-bottom: 10px;
+    margin-right: 5px;
+    -webkit-appearance: none; /* Remove default appearance */
+    -moz-appearance: none;
+    appearance: none;
+    border: 1px solid #ccc; /* Add a border for a square appearance */
+    width: 20px; /* Set width and height to create a square */
+    height: 20px;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+}
+
+.filter-section input[type="radio"]:checked {
+    background-color: #007BFF; /* Change background color when checked */
+    border-color: #007BFF; /* Change border color when checked */
+    color: #fff; /* Change text color when checked */
+}
+
+
+
+
+/* Add styles for the search bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+}
+
+.search-bar input {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-right: 5px;
+    width: 1500px;
+    border: solid;
+}
+
+.search-bar button {
+    background-color: #007BFF; /* Choose your desired background color */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Style the search icon inside the button */
+.search-bar button i {
+    font-size: 18px;
+}
+
+
+
+
+/*  cart banner*/
+#page-header2{
+    background-image: url(img/about/banner.png);
+    width: 100%;
+    height: 40vh;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    padding: 14px;
+
+
+}
+#page-header2 h2{
+    color: #fff;
+
+}
+
+#page-header2 p{
+    color: #fff;
+
+}
+#cart table{
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    white-space: nowwrap;
+
+}
+#cart  table img{
+    width: 70px;
+}
+#cart table td:nth-child(1){
+    width: 100px;
+    text-align: center;
+
+
+}
+#cart table td:nth-child(2){
+    width: 150px;
+    text-align: center;
+    
+
+}
+#cart table td:nth-child(3){
+    width: 250px;
+    text-align: center;
+    
+
+}
+#cart table td:nth-child(4),
+#cart table td:nth-child(5),
+#cart table td:nth-child(6){
+    width: 150px;
+    text-align: center;
+    
+
+}
+#cart table td:nth-child(5) input{
+    width: 70px;
+    padding: 10px 5px 10px 15px
+
+}
+#cart table thead{
+    border: 1px solid #e2e9e1;
+    border-left: none;
+    border-right: none;
+}
+#cart table thead td{
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 18px 0;
+}
+#cart table tbody tr td{
+    padding-top: 15px;
+}#cart table tbody  td{
+    font-size: 13px;
+
+}
+
+#cart-add{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+ #coupons{
+    width: 50%;
+    margin-bottom: 30px;
+
+
+}
+#coupons h3{
+    padding-bottom: 15px;
+}
+#coupons input{
+    padding: 10px 20px;
+    outline: none;
+    width: 60%;
+    margin-right: 10px;
+    border: 1px solid #e2e9e1;
+}
+#coupons button,
+#Subtotal button{
+    background-color: #088178;
+    color: #fff;
+    padding: 12px 20px;
+}
+#Subtotal{
+    width: 50%;
+    margin-bottom: 30px;
+    border: 1px solid #e2e9e1;
+    padding: 30px;
+}
+#Subtotal table{
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+
+}
+#Subtotal table td{
+    width: 50%;
+    border: 1px solid #e2e9e1;
+    padding: 10px;
+    font-size: 13px;
+
+
+}
+#Subtotal h3{
+    padding-bottom: 15px;
+}
+
+#cart{
+    overflow-x: auto;
+}
+
+@media(max-width:447px){
+    #cart-add{
+        flex-direction: column;
+    }
+    #coupons{
+        width: 100%;
+    }
+    #Subtotal{
+        width: 100%;
+        padding: 20px;
+        
+    }
+}
+#successMessage {
+    display: none;
+    background-color: #4caf50;
+    color: white;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 5px;
+  }
+
+  /* Add this animation for the blink effect */
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .blink {
+    animation: blink 2s infinite;
+  }
+  #addToCartBtn {
+    background-color: #088178; /* Background color */
+    color: #fff; /* Text color */
+    font-size: 16px; /* Font size */
+    font-weight: 600; /* Font weight */
+    padding: 15px 30px; /* Padding */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Add border-radius for rounded corners */
+    cursor: pointer; /* Change cursor on hover */
+    outline: none; /* Remove outline on focus */
+    transition: background-color 0.2s, color 0.2s; /* Add transition effect */
+}
+
+#addToCartBtn:hover {
+    background-color: #065c56; /* Change background color on hover */
+    color: #fff; /* Change text color on hover */
+}
+.star-rating i {
+    font-size: 1.2em; /* Adjust the font size as needed */
+    color: #ffd700; /* Default color for filled stars */
+}
+
+.star-rating i.inactive {
+    color: #ccc; /* Color for unfilled stars */
+}
+#addReviewForm {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+textarea,
+input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Style the reviews section */
+#reviews {
+    margin-top: 20px;
+}
+
+h3 {
+    margin-bottom: 10px;
+}
+
+.reviews-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.review {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px;
+    width: calc(33.33% - 20px); /* Adjust the width as needed */
+    box-sizing: border-box;
+}
+
+
+
+.review h5 {
+    margin-bottom: 5px;
+}
+
+.review p {
+    margin-bottom: 10px;
+}
+
+.delete-review-btn {
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+</style>
+<%- include("header.ejs") %>
+
+<section id="prodetails" class="section-p1">
+    <div class="singleproimg">
+        <img src="/uploads/<%= product.productImage %>" alt="" width="100%" id="main">
+        <div class="small-img-group">
+           
+        </div>
+    </div>
+<div class="single-pro-details">
+    <h6><%= product.category.name %></h6>
+        <h4><%= product.productName %></h4>
+        <h4>
+            <% if (product.offerPrice && product.offerPrice < product.regularPrice) { %>
+                <span style="text-decoration: line-through; color: red;position: relative; top: -25px;">RS <%= product.regularPrice.toFixed(2) %></span>
+                <br>
+                <span style="color: green; position: relative; top: 5px;">Offer RS <%= product.offerPrice.toFixed(2) %></span>
+            <% } else { %>
+                RS <%= product.regularPrice.toFixed(2) %>
+            <% } %>
+        </h4>
+    <select name="" id="">
+        <option value="">Select Size</option>
+        <option value="">XL</option>
+        <option value="">XXL</option>
+        <option value="">Small</option>
+        <option value="">Large</option>
+
+    </select>
+ 
+   <!-- Inside the form in singlepro.ejs -->
+<form id="addToCartForm" action="/add-to-cart/<%= product._id %>" method="POST">
+    <!-- ... (existing code) -->
+
+    <!-- Add a quantity input field -->
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" name="quantity" min="1" required>
+
+    <button type="submit" id="addToCartBtn">Add to Cart</button>
+</form>
+
+    <div id="successMessage"></div>
+
+    <h4>Product Details</h4>
+    <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint minima vel iste eligendi consectetur provident. Dolore officia quo quam beatae.</span>
+
+</div>
+</section>
+<section id="product1" class="section-p1">
+    <h2>Featured Product</h2>
+    <p>Summer Collection New Morden Design</p>
+       
+        
+    <div class="pro-container">
+        <% if (products.length > 0) { %>
+            <div class="pro-container">
+                <% products.slice(0,4).forEach(product => { %>
+                    <div class="pro">
+                        <img src="/uploads/<%= product.productImage %>" alt="<%= product.productName %> Image">
+                        <div class="des">
+                            <span><%= product.productName %></span>
+                            <h5><%= product.category.name %></h5>
+                            <div class="star">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h4>RS <%= product.regularPrice.toFixed(2) %></h4>
+                        </div>
+                        <a href="#"><i class="fa-solid fa-cart-shopping cart"></i></a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p>No products available.</p>
+        <% } %>
+    </div>
+</section>
+<form id="addReviewForm" data-edit-mode="<%= editMode ? 'true' : 'false' %>" action="/<%= product._id %>/add-review" method="POST">
+    <label for="reviewText">Review:</label>
+    <textarea id="reviewText" name="text" required></textarea>
+
+    <label for="reviewRating">Rating:</label>
+    <input type="number" id="reviewRating" name="rating" min="1" max="5" required>
+
+  
+    <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
+
+   
+   
+
+    <button type="submit"><%= editMode ? 'Save Changes' : 'Add Review' %></button>
+</form>
+<section id="reviews" class="section-p1">
+    <h3>Customer Reviews</h3>
+    <% if (product.reviews.length > 0) { %>
+        <div class="reviews-container">
+            <% product.reviews.forEach(review => { %>
+                <div class="review" data-rating="<%= review.rating %>">
+                    <h5><%= review.user.name %></h5>
+                    <div class="star-rating"></div>
+                    <p><%= review.text %></p>
+                    <div class="review-options">
+                        <button class="delete-review-btn" data-review-id="<%= review._id %>">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                    <!-- Add options for editing and deleting reviews -->
+                    
+                </div>
+                
+            <% }); %>
+        </div>
+    <% } else { %>
+        <p>No reviews available for this product.</p>
+    <% } %>
+</section>
+<section id="newsletter" class="section-p1  section-m1">
+    <div class="newstext">
+        <h4>Signup Up For Newsletter</h4>
+        <p>Get e-Mail updates about our latest shop and <span>sepecial offers</span></p>
+       
+    </div>
+    <div class="form">
+        <input type="text" placeholder="your  email address">
+        <button class="normal">Sign up</button>
+    </div>
+
+
+</section>
+<!-- views/product-details.ejs -->
+
+
+</section>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    const addToCartForm = document.getElementById('addToCartForm');
+    const successMessage = document.getElementById('successMessage');
+    const addReviewForm = document.getElementById('addReviewForm');
+
+    addToCartForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const quantity = document.getElementById('quantity').value;
+
+        try {
+            const response = await fetch(addToCartForm.action, {
+                method: addToCartForm.method,
+                body: new URLSearchParams({ quantity }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    successMessage.innerText = 'Product added to cart successfully!';
+                    successMessage.classList.add('blink');
+                    successMessage.style.display = 'block';
+                } else {
+                    console.error('Failed to add product to cart:', result.message);
+                }
+            } else {
+                console.error('Failed to add product to cart');
+            }
+        } catch (error) {
+            console.error('Error during fetch:', error);
+        }
+    });
+
+    if (addReviewForm) {
+        addReviewForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const userIdElement = document.getElementById('userId');
+            const ratingElement = document.getElementById('reviewRating');
+            const textElement = document.getElementById('reviewText');
+            const reviewIdElement = document.getElementById('reviewId');
+
+            // Check if the elements exist before accessing their values
+            const userId = userIdElement ? userIdElement.value : null;
+            const rating = ratingElement ? ratingElement.value : null;
+            const text = textElement ? textElement.value : null;
+            const reviewId = reviewIdElement ? reviewIdElement.value : null;
+
+            try {
+                const response = await fetch(addReviewForm.action, {
+                    method: addReviewForm.method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userId, rating, text, reviewId }),
+                });
+
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error('Failed to add/edit review:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error during fetch:', error);
+            }
+        });
+    }
+
+    const reviewsContainer = document.querySelector('.reviews-container');
+
+    if (reviewsContainer) {
+        const reviews = reviewsContainer.querySelectorAll('.review');
+
+        reviews.forEach((review) => {
+            const starRating = review.querySelector('.star-rating');
+            const ratingValue = parseInt(review.getAttribute('data-rating'));
+
+            starRating.innerHTML = '';
+
+            for (let i = 1; i <= 5; i++) {
+                const starIcon = document.createElement('i');
+                starIcon.classList.add('fas', 'fa-star', i <= ratingValue ? 'active' : 'inactive');
+                starRating.appendChild(starIcon);
+            }
+
+            // Add event listener for delete review button
+            const deleteBtn = review.querySelector('.delete-review-btn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', async () => {
+                    const reviewId = deleteBtn.getAttribute('data-review-id');
+                    if (confirm('Are you sure you want to delete this review?')) {
+                        // Perform delete action (you can use fetch or other AJAX methods)
+                        try {
+                            const response = await fetch(`/delete-review/${reviewId}`, {
+                                method: 'DELETE',
+                            });
+
+                            if (response.ok) {
+                                // Refresh the page or update the reviews container
+                                window.location.reload();
+                            } else {
+                                console.error('Failed to delete review:', response.statusText);
+                            }
+                        } catch (error) {
+                            console.error('Error during fetch:', error);
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
+</script>
+
+
+
+
+
+  
+
+
+<%- include("footer.ejs") %>

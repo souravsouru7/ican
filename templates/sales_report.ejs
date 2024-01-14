@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        .address {
+            font-style: italic;
+            color: #666;
+        }
+
+        .unavailable {
+            color: #ff0000;
+        }
+    </style>
+    <!-- Add any additional styles or meta tags if needed -->
+</head>
+<body>
+    <h1>Sales Report</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>User Name</th>
+                <th>User Email</th>
+                <th>Product Name</th>
+                <th>Product Quantity</th>
+                <th>Total Amount</th>
+                <th>Order Status</th>
+                <th>Product Category</th>
+                <th>Address</th>
+                <!-- Add more headers as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            <% orders.forEach(order => { %>
+                <tr>
+                    <td><%= order._id %></td>
+                    <td><%= order.createdAt %></td>
+                    <td><%= order.user.name %></td>
+                    <td><%= order.user.email %></td>
+                    <td><%= order.products[0]?.product?.productName %></td>
+                    <td><%= order.products[0]?.quantity %></td>
+                    <td><%= order.totalAmount %></td>
+                    <td><%= order.status %></td>
+                    <td><%= order.products[0]?.product?.category?.name %></td>
+                    <td>
+                        <% if (order.selectedAddress) { %>
+                            <div class="address">
+                                <%= order.selectedAddress.street %><br>
+                                <%= order.selectedAddress.city %><br>
+                                <%= order.selectedAddress.state %>, <%= order.selectedAddress.country %> <%= order.selectedAddress.zipCode %><br>
+                            </div>
+                        <% } else { %>
+                            <span class="unavailable">Address not available</span>
+                        <% } %>
+                    </td>
+                    <!-- Add more data fields as needed -->
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
+</html>

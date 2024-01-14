@@ -1,0 +1,104 @@
+<%- include("profile.ejs") %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .section-heading {
+            color: #3498db;
+        }
+
+        .address-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .address-item {
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        .edit-link,
+        .delete-link {
+            text-decoration: none;
+            color: #3498db;
+            margin-left: 10px;
+            border: 1px solid #3498db;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .edit-link:hover,
+        .delete-link:hover {
+            color: #fff;
+            background-color: #3498db;
+        }
+
+        .add-address-link {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-address-link:hover {
+            background-color: #207bb2;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 class="section-heading">User Addresses</h2>
+    <ul class="address-list">
+        <% addresses.forEach(address => { %>
+            <li class="address-item">
+                Street: <%= address.street %>, 
+                City: <%= address.city %>, 
+                State: <%= address.state %>, 
+                Zip Code: <%= address.zipCode %>, 
+                Country: <%= address.country %>
+
+                <a class="edit-link" href="/profile/address/edit/<%= address._id %>">Edit</a>
+                <a href="/profile/address/delete/<%= address._id %>" class="delete-link" data-confirm="Are you sure you want to delete this address?">Delete</a>
+            </li>
+        <% }); %>
+    </ul>
+
+    <a href="/profile/address/new-address" class="add-address-link">Add New Address</a>
+
+    <script>
+        const deleteLinks = document.querySelectorAll('.delete-link');
+
+        deleteLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                const confirmMessage = link.getAttribute('data-confirm');
+                if (confirmMessage && !confirm(confirmMessage)) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

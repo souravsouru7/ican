@@ -1,0 +1,123 @@
+<%- include("header.ejs") %>
+<link rel="stylesheet" href="styles/shop.css">
+<div class="search-bar">
+    <form action="/shop" method="GET">
+        <input type="text" name="search" placeholder="Search...">
+        <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+</div>
+
+<section id="page-header">
+    <h2>#Stayhome</h2>
+    <p>Save more with coupons & up to 70% off!</p>
+</section>
+
+<!-- Sidebar section -->
+<section id="sidebar">
+    <h3>Category</h3>
+    <div class="cate">
+        <a href="/shop">All</a>
+        <% categories.forEach(category => { %>
+            <a href="/shop?category=<%= category.name %>"><%= category.name %></a>
+        <% }); %>
+    </div>
+    <h3>Filter</h3>
+    <div class="filter-section">
+        <form action="/shop" method="GET">
+        <label for="size">Size:</label>
+        <select id="size" name="size">
+            <option value="">Default</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+        </select>
+    </div>
+    <div class="filter-section">
+        <label for="price">Price Range:</label>
+        <input type="radio" name="priceRange" id="range1" value="0-500"> 0 RS to 500 RS
+        <br>
+        <input type="radio" name="priceRange" id="range2" value="500-1000"> 500 RS to 1000 RS
+        <br>
+        <input type="radio" name="priceRange" id="range3" value="1000-1500"> 1000 RS to 1500 RS
+        <br>
+        <input type="radio" name="priceRange" id="range4" value="1500-2000"> 1500 RS to 2000 RS
+        <br>
+
+    </div>
+    <div class="filter-section">
+        <label for="sort">Sort:</label>
+        <select id="sort" name="sort">
+            <option value="">Default</option>
+            <option value="low-to-high">Low to High</option>
+            <option value="high-to-low">High to Low</option>
+        </select>
+    </div>
+    <button class="normal" type="submit" style="background-color: green;">Filter</button>
+</form>
+</section>
+
+
+
+<!-- Product section -->
+<section id="product1" class="section-p1">
+    <div class="pro-container">
+        <% if (products.length > 0) { %>
+            <% products.forEach(product => { %>
+                <div class="pro">
+                    <img src="/uploads/<%= product.productImage %>" alt="<%= product.productName %> Image">
+                    <div class="des">
+                        <span><%= product.productName %></span>
+                        <h5><%= product.category.name %></h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h4>
+                            <% if (product.offerPrice && product.offerPrice < product.regularPrice) { %>
+                                <span style="text-decoration: line-through; color: red;">RS <%= product.regularPrice.toFixed(2) %></span>
+                                <br>
+                                <span style="color: green;">Offer RS <%= product.offerPrice.toFixed(2) %></span>
+                            <% } else { %>
+                                RS <%= product.regularPrice.toFixed(2) %>
+                            <% } %>
+                        </h4>
+                        
+
+                    </div>
+                    <a href="/product/<%= product._id %>"><i class="fa-solid fa-cart-shopping cart"></i></a>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No products available.</p>
+        <% } %>
+    </div>
+</section>
+
+<!-- Pagination section -->
+<!-- Pagination section -->
+<section id="pagination" class="section-p1">
+    <% if (totalPages > 1) { %>
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="/shop?page=<%= i %>" <% if (currentPage == i) { %>class="active"<% } %>><%= i %></a>
+        <% } %>
+    <% } %>
+</section>
+
+
+<!-- Newsletter section -->
+<section id="newsletter" class="section-p1 section-m1">
+    <div class="newstext">
+        <h4>Sign Up For Newsletter</h4>
+        <p>Get e-Mail updates about our latest shop and <span>special offers</span></p>
+    </div>
+    <div class="form">
+        <input type="text" placeholder="your email address">
+        <button class="normal">Sign up</button>
+    </div>
+</section>
+
+<%- include("footer.ejs") %>

@@ -1,0 +1,73 @@
+<%- include("header.ejs") %>
+
+<section id="page-header2" class="cartbanner">
+       
+    <h2>#let's_talk</h2>
+   
+    <p>LEAVE A MESSAGE,We love to here from you!</p>
+ 
+</section>
+<section id="cart" class="section-p1">
+    <table width="100%">
+        <thead>
+            <tr>
+                <td>Remove</td>
+                <td>Image</td>
+                <td>Product</td>
+                <td>Price</td>
+                <td>Quantity</td>
+                <td>Subtotal</td>
+            </tr>
+        </thead>
+        <tbody>
+            <% products.forEach(product => { %>
+                <tr>
+                    <td><a href=""><i class="fa-solid fa-trash"></i></a></td>
+                    <td><img src="<%= product.image %>" alt="<%= product.name %>"></td>
+                    <td><%= product.name %></td>
+                    <td><%= product.price %></td>
+                    <td><input type="number" value="<%= product.quantity %>"></td>
+                    <td><%= product.subtotal %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+
+    </table>
+
+</section>
+<section id="cart-add" class="section-p1">
+    <div id="coupons">
+        <h3>Apply Coupon</h3>
+        <div>
+            <input type="text" placeholder="Enter your coupon">
+            <button class="normal">Apply</button>
+        </div>
+    </div>
+    <div id="Subtotal">
+        <h3>Cart Total</h3>
+        <table>
+            <tr>
+                <td>
+                    cart Subtotal
+                </td>
+                <td>
+                    $335
+                </td>
+                
+            </tr>
+          
+            <tr>
+                <td>Shipping</td>
+                <td>Free</td>
+            </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td><strong>$334</strong></td>
+            </tr>
+        </table>
+        <button class="normal">Procceed to checkout</button>
+
+    </div>
+</section>
+
+<%- include("footer.ejs") %>

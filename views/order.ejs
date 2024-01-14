@@ -1,0 +1,304 @@
+<!-- order.ejs -->
+<%- include("adminheader.ejs") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .status-dropdown {
+            width: 100%;
+            padding: 6px;
+        }
+
+        .update-status-btn {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 8px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 2px 2px;
+            cursor: pointer;
+        }
+        form {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+        .pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .pagination ul {
+        list-style: none;
+        display: flex;
+        gap: 10px;
+    }
+
+    .pagination li {
+        background-color: #007bff;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .pagination li.active {
+        background-color: #4caf50;
+    }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        button {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 200px; /* Adjust the width as needed */
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <form action="/admin/dashboard/user" method="get">
+        <label for="search">Search by Order ID:</label>
+        <input type="text" id="search" name="search" value="<%= searchQuery || '' %>" placeholder="Enter Order ID...">
+        
+        <!-- Add a dropdown for selecting status -->
+        <label for="status">Filter by Status:</label>
+        <select id="status" name="status">
+            <option value="" <% if (!statusFilter) { %>selected<% } %>>All</option>
+            <option value="Placed" <% if (statusFilter === 'Placed') { %>selected<% } %>>Placed</option>
+            <option value="Shipped" <% if (statusFilter === 'Shipped') { %>selected<% } %>>Shipped</option>
+            <option value="Out for Delivery" <% if (statusFilter === 'Out for Delivery') { %>selected<% } %>>Out for Delivery</option>
+            <option value="Delivered" <% if (statusFilter === 'Delivered') { %>selected<% } %>>Delivered</option>
+            <option value="Cancelled" <% if (statusFilter === 'Cancelled') { %>selected<% } %>>Cancelled</option>
+        </select>
+        
+        <button type="submit">Search</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>User Name</th>
+                <th>User Email</th>
+                <th>Product Name</th>
+                <th>Product Quantity</th>
+                <th>Total Amount</th>
+                <th>Order Status</th>
+                <th>Update Status</th>
+                <th>Product Category</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (searchQuery) { %>
+                <!-- Display search results -->
+                <% if (orders.length > 0) { %>
+                    <% orders.forEach(order => { %>
+                        <!-- Display search result details -->
+                        <tr>
+                            <td><%= order._id %></td>
+                            <td><%= order.createdAt %></td>
+                            <td><%= order.user.name %></td>
+                            <td><%= order.user.email %></td>
+                            <td><%= order.products[0].product.productName %></td>
+                            <td><%= order.products[0].quantity %></td>
+                            <td><%= order.totalAmount %></td>
+                            <td>
+                                <select class="status-dropdown" id="statusDropdown<%= order._id %>">
+                                    <!-- ... existing status options ... -->
+                                </select>
+                            </td>
+                            <td>
+                                <button class="update-status-btn" onclick="updateOrderStatus('<%= order._id %>')">Update</button>
+                                <button class="view-details-btn" onclick="viewProductDetails('<%= order.products[0].product._id %>')">View Details</button>
+                            </td>
+                            <td><%= order.products[0].product.category.name %></td>
+                            <td>
+                                <% if (order.selectedAddress) { %>
+                                    <%= order.selectedAddress.addressLine1 %><br>
+                                    <%= order.selectedAddress.addressLine2 %><br>
+                                    <%= order.selectedAddress.city %>, <%= order.selectedAddress.state %> <%= order.selectedAddress.zipCode %><br>
+                                <% } else { %>
+                                    Address not available
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="10">No results found for '<%= searchQuery %>'</td>
+                    </tr>
+                <% } %>
+            <% } else { %>
+                <!-- Display all orders -->
+                <% orders.forEach(order => { %>
+                    <!-- Display order details -->
+                    <tr>
+                        <td><%= order._id %></td>
+                        <td><%= order.createdAt %></td>
+                        <td><%= order.user.name %></td>
+                        <td><%= order.user.email %></td>
+                        <td><%= order.products[0].product.productName %></td>
+                        <td><%= order.products[0].quantity %></td>
+                        <td><%= order.totalAmount %></td>
+                        <td>
+                            <select class="status-dropdown" id="statusDropdown<%= order._id %>">
+                              <option value="Placed" <%= order.status === 'Placed' ? 'selected' : '' %>>Placed</option>
+                              <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                              <option value="Out for Delivery" <%= order.status === 'Out for Delivery' ? 'selected' : '' %>>Out for Delivery</option>
+                              <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                              <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                            </select>
+                          </td>
+                        <td>
+                            <button class="update-status-btn" onclick="updateOrderStatus('<%= order._id %>')">Update</button>
+                            <button class="view-details-btn" onclick="viewProductDetails('<%= order.products[0].product._id %>')">View Details</button>
+                        </td>
+                        <td><%= order.products[0].product.category.name %></td>
+                        <td>
+                            <% if (order.selectedAddress) { %>
+                                <%= order.selectedAddress.street %><br>
+                                <%= order.selectedAddress.city %><br>
+                                <%= order.selectedAddress.state %>, <%= order.selectedAddress.country %> <%= order.selectedAddress.zipCode %><br>
+                            <% } else { %>
+                                Address not available
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }); %>
+            <% } %>
+        </tbody>
+    </table>
+    <form id="downloadForm">
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" required>
+        
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="endDate" required>
+    
+        <button type="button" onclick="downloadReport('excel')">Download Excel Report</button>
+        <button type="button" onclick="downloadReport('pdf')">Download PDF Report</button>
+    </form>
+<div class="pagination">
+    <% if (totalPages > 1) { %>
+        <ul>
+            <% if (currentPage > 1) { %>
+                <li>
+                    <a href="/admin/dashboard/user?page=<%= currentPage - 1 %>&search=<%= searchQuery || '' %>&status=<%= statusFilter || '' %>">Previous</a>
+                </li>
+            <% } %>
+
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <li <% if (currentPage === i) { %>class="active"<% } %>>
+                    <a href="/admin/dashboard/user?page=<%= i %>&search=<%= searchQuery || '' %>&status=<%= statusFilter || '' %>"><%= i %></a>
+                </li>
+            <% } %>
+
+            <% if (currentPage < totalPages) { %>
+                <li>
+                    <a href="/admin/dashboard/user?page=<%= currentPage + 1 %>&search=<%= searchQuery || '' %>&status=<%= statusFilter || '' %>">Next</a>
+                </li>
+            <% } %>
+        </ul>
+    <% } %>
+</div>
+
+
+  
+    </form>
+    <script>
+        async function updateOrderStatus(orderId) {
+            const newStatus = document.getElementById(`statusDropdown${orderId}`).value;
+
+            try {
+                const response = await fetch(`/update-order-status/${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ newStatus }),
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    console.log('Updated Order Status:', responseData.updatedOrder.status);
+                    // You may choose to update the UI or perform additional actions.
+                } else {
+                    console.error('Error updating order status:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error updating order status:', error);
+            }
+        }
+        async function downloadReport(type) {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        // Determine the file type based on the button clicked
+        const fileType = type === 'excel' ? 'excel' : 'pdf';
+
+        // Construct the URL for downloading the report
+        window.location.href = `/admin/dashboard/sales/report/${fileType}?startDate=${startDate}&endDate=${endDate}`;
+    }
+    
+
+function viewProductDetails(productId) {
+        window.location.href = `/admin/dashboard/view-product/${productId}`;
+    }
+
+    </script>
+
+</body>
+</html>
