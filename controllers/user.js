@@ -192,11 +192,13 @@ exports.updateAddress = async (req, res) => {
 exports.deleteAddress = async (req, res) => {
     try {
         const addressId = req.params.id;
-        // Find and remove the address
-        await Address.findByIdAndDelete(addressId);
+
+        // Find the address by ID and update the 'deleted' field to true
+        await Address.findByIdAndUpdate(addressId, { deleted: true });
+
         res.redirect('/profile/address');
     } catch (error) {
-        console.error('Error deleting address:', error);
+        console.error('Error soft deleting address:', error);
         res.status(500).send('Internal Server Error');
     }
 };

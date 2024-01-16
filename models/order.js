@@ -12,9 +12,19 @@ const orderSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   products: [
     {
-      product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true,
+      },
       quantity: { type: Number, default: 1 },
+      productName: { type: String, required: true },
+      productImage: { type: String, required: true },
+      RegularPrice: { type: Number, required: true },
+      salesPrice: { type: Number },
       
+      offerPrice: { type: Number },
+      shirtSize: { type: String, enum: ['S', 'M', 'L', 'XL', 'XXL'] },
     },
   ],
   totalAmount: { type: Number, default: 0 },
@@ -31,7 +41,7 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['cod', 'wallet', 'online'], // Add or modify payment methods as needed
+    enum: ['cod', 'wallet', 'online'],
     required: true,
   },
   createdAt: { type: Date, default: Date.now } ,

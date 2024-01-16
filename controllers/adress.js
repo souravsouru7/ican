@@ -189,10 +189,22 @@ exports.cod= async (req, res) => {
       return res.status(400).json({ message: 'Invalid cart or total amount' });
     }
     const appliedCoupon = cart.appliedCoupon;
-    // Create an order without involving Razorpay for COD
+    const orderProducts = await Promise.all(
+      cart.products.map(async (cartProduct) => {
+        const productDetails = await Product.findById(cartProduct.product);
+        return {
+          product: cartProduct.product,
+          quantity: cartProduct.quantity,
+          productName: productDetails.productName,
+          productImage: productDetails.productImage,
+          RegularPrice: productDetails.regularPrice,
+          // Add other product details as needed
+        };
+      })
+    );
     const order = new Order({
       user: userId,
-      products: cart.products,
+      products: orderProducts,
       totalAmount: cart.totalAmount,
       selectedAddress: selectedAddressId,
       walletPayment: false,

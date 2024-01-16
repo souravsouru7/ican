@@ -36,7 +36,7 @@ exports.signup = async (req, res) => {
         await newUser.save();
 
         // Send verification email
-        const verificationLink = `http://localhost:3000/verify/${email}`;
+        const verificationLink = `https://ceraaa.shop/verify/${email}`;
         const mailOptions = {
             from: 'soutavr5@gmail.com',
             to: email,
@@ -65,7 +65,8 @@ exports.verify = async (req, res) => {
     try {
         // Code to update user's verification status in the database
         await User.updateOne({ email }, { verified: true });
-        res.send('Email verified successfully! You can now log in.');
+        console.log('Email verified successfully!');
+        res.redirect('/login');  // Check if this line is executed
     } catch (error) {
         console.error('Error verifying email:', error);
         res.status(500).send('Error verifying email.');

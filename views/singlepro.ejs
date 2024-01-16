@@ -1111,6 +1111,8 @@ h3 {
     <input type="number" id="quantity" name="quantity" min="1" required>
 
     <button type="submit" id="addToCartBtn">Add to Cart</button>
+    <div id="outOfStockMessage" style="color: red; display: none;">Product is out of stock</div>
+
 </form>
 
     <div id="successMessage"></div>
@@ -1232,9 +1234,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     successMessage.innerText = 'Product added to cart successfully!';
                     successMessage.classList.add('blink');
                     successMessage.style.display = 'block';
+                    outOfStockMessage.style.display = 'none'; // Hide out-of-stock message
                 } else {
                     console.error('Failed to add product to cart:', result.message);
                 }
+            } else if (response.status === 400) {
+                // Product is out of stock
+                outOfStockMessage.innerText = 'Product is out of stock';
+                outOfStockMessage.style.display = 'block';
             } else {
                 console.error('Failed to add product to cart');
             }
@@ -1251,6 +1258,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const ratingElement = document.getElementById('reviewRating');
             const textElement = document.getElementById('reviewText');
             const reviewIdElement = document.getElementById('reviewId');
+            const outOfStockMessage = document.getElementById('outOfStockMessage'); 
 
             // Check if the elements exist before accessing their values
             const userId = userIdElement ? userIdElement.value : null;
