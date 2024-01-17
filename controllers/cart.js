@@ -175,7 +175,7 @@ exports.cartdetails = async (req, res) => {
         // Fetch all products in the cart
         const productIds = cart.products.map(cartProduct => cartProduct.product);
         const productsWithQuantity = await Product.find({ _id: { $in: productIds } })
-            .select('regularPrice _id productName') // Modify this based on your Product schema
+            .select('regularPrice _id productName')
             .lean();
 
         // Calculate subtotal based on the product prices

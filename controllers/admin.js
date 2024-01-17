@@ -349,18 +349,8 @@ router.get('/admin/dashboard/user', async (req, res) => {
                 path: 'user',
                 select: 'name email',
             })
-            .populate({
-                path: 'selectedAddress',
-                select: 'country street city state zipCode',
-            })
-            .populate({
-                path: 'products.product',
-                select: 'productName category',
-                populate: {
-                    path: 'category',
-                    select: 'name',
-                },
-            })
+           
+            
             .skip((page - 1) * itemsPerPage)
             .limit(itemsPerPage);
 
@@ -589,7 +579,7 @@ router.get('/admin/dashboard/productsalesgraph', async (req, res) => {
                 const salesData = await Order.aggregate([
                     {
                         $match: {
-                            'products.product': product._id,
+                            ' Product.product': product._id,
                             status: 'Delivered', // Assuming you want to consider only delivered orders
                         },
                     },
@@ -748,15 +738,16 @@ router.get('/api/category-sales-data', async (req, res) => {
 async function aggregateCategorySales() {
     const categorySalesData = await Order.aggregate([
         {
-            $unwind: '$products',
+            $unwind: '$Product',
         },
         {
             $lookup: {
                 from: 'products',
-                localField: 'products.product',
+                localField: 'Product.product',
                 foreignField: '_id',
                 as: 'productDetails',
             },
+            
         },
         {
             $unwind: '$productDetails',
@@ -796,18 +787,18 @@ router.get('/api/product-sales-data', async (req, res) => {
         // Aggregate product sales data based on orders, considering totalAmount
         const productSalesData = await Order.aggregate([
             {
-                $unwind: '$products', // Deconstruct the products array
+                $unwind: '$Product',  // Deconstruct the products array
             },
             {
                 $group: {
-                    _id: '$products.product',
-                    totalSales: { $sum: '$products.quantity' },
+                    _id: '$Product.product',
+                    totalSales: { $sum: '$Product.quantity' },
                     totalAmount: { $sum: '$totalAmount' }, // Consider totalAmount
                 },
             },
             {
                 $lookup: {
-                    from: 'products', // Adjust this based on your actual collection name
+                    from: 'products', 
                     localField: '_id',
                     foreignField: '_id',
                     as: 'productDetails',
@@ -834,25 +825,22 @@ router.get('/api/product-sales-data', async (req, res) => {
 });
 
 
-router.get('/admin/dashboard/view-product/:productId', async (req, res) => {
+router.get('/admin/dashboard/view-product/:orderId', async (req, res) => {
     try {
-        const productId = req.params.productId;
-        const product = await Product.findById(productId).populate('category');
+        const orderId = req.params.orderId;
+        const order = await Order.findById(orderId);
 
-        const order = {
-            products: [
-                {
-                    product: product,
-                }
-            ],
-        };
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
 
         res.render('product-details', { order });
     } catch (error) {
-        console.error('Error fetching product details:', error);
+        console.error('Error fetching order details:', error);
         res.status(500).send('Internal Server Error');
     }
 });
+
 router.get('/excel', async (req, res) => {
     try {
         const startDate = new Date(req.query.startDate);
@@ -869,8 +857,8 @@ router.get('/excel', async (req, res) => {
                 select: 'name email', // Add more fields if needed
             })
             .populate({
-                path: 'products.product',
-                select: 'productName category', // Add more fields if needed
+                path: 'Product.product',
+                select: 'productName ', 
             })
             .populate('selectedAddress');
 
@@ -881,25 +869,23 @@ router.get('/excel', async (req, res) => {
         const worksheet = workbook.addWorksheet('Delivered Orders Report');
 
         // Add headers to the worksheet
-        worksheet.addRow(['Order ID', 'Date', 'User Name', 'User Email', 'Product Name', 'Product Quantity', 'Total Amount', 'Order Status', 'Product Category', 'Address']);
+        worksheet.addRow(['Order ID', 'Date', 'User Name', 'User Email', 'Product Name', 'Product Quantity', 'Total Amount', 'Product Category', 'Address']);
 
-        // Add data to the worksheet
+        // Add 
         deliveredOrders.forEach(order => {
             worksheet.addRow([
                 order._id,
                 order.createdAt,
                 order.user ? order.user.name : 'N/A',
                 order.user ? order.user.email : 'N/A',
-                order.products.length > 0 ? (order.products[0].product ? order.products[0].product.productName : 'N/A') : 'N/A',
+                order.products.length > 0 ? order.products[0].productName : 'N/A',
                 order.products.length > 0 ? order.products[0].quantity : 'N/A',
                 order.totalAmount,
                 order.status,
-                order.products.length > 0 ? (order.products[0].product.category ? order.products[0].product.category.name : 'N/A') : 'N/A',
                 order.selectedAddress ? `${order.selectedAddress?.street || ''}, ${order.selectedAddress?.city || ''}, ${order.selectedAddress?.state || ''}, ${order.selectedAddress?.zipCode || ''} ${order.selectedAddress?.country || ''}` : 'Address not available',
             ]);
         });
 
-        // Calculate and add the total amount in the last row
         const totalAmount = deliveredOrders.reduce((sum, order) => sum + order.totalAmount, 0);
         worksheet.addRow(['Total Amount', '', '', '', '', '', totalAmount]);
 
@@ -923,7 +909,7 @@ router.get('/admin/dashboard/sales/report/pdf', async (req, res) => {
         const orders = await Order.find({ createdAt: { $gte: req.query.startDate, $lte: req.query.endDate } })
             .populate('user')
             .populate({
-                path: 'products.product',
+                path: 'Product.product',
                 populate: { path: 'category' }
             })
             .populate('selectedAddress');

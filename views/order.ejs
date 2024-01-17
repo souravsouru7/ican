@@ -137,7 +137,7 @@
                 <th>Total Amount</th>
                 <th>Order Status</th>
                 <th>Update Status</th>
-                <th>Product Category</th>
+             
                 <th>Address</th>
             </tr>
         </thead>
@@ -152,7 +152,7 @@
                             <td><%= order.createdAt %></td>
                             <td><%= order.user.name %></td>
                             <td><%= order.user.email %></td>
-                            <td><%= order.products[0].product.productName %></td>
+                            <td><%= order.products[0].productName %></td>
                             <td><%= order.products[0].quantity %></td>
                             <td><%= order.totalAmount %></td>
                             <td>
@@ -190,7 +190,7 @@
                         <td><%= order.createdAt %></td>
                         <td><%= order.user.name %></td>
                         <td><%= order.user.email %></td>
-                        <td><%= order.products[0].product.productName %></td>
+                        <td><%= order.products[0].productName %></td>
                         <td><%= order.products[0].quantity %></td>
                         <td><%= order.totalAmount %></td>
                         <td>
@@ -204,17 +204,21 @@
                           </td>
                         <td>
                             <button class="update-status-btn" onclick="updateOrderStatus('<%= order._id %>')">Update</button>
-                            <button class="view-details-btn" onclick="viewProductDetails('<%= order.products[0].product._id %>')">View Details</button>
+                            <button class="view-details-btn" onclick="viewOrderDetails('<%= order._id %>')">View Details</button>
                         </td>
-                        <td><%= order.products[0].product.category.name %></td>
+                       
                         <td>
+                           
                             <% if (order.selectedAddress) { %>
-                                <%= order.selectedAddress.street %><br>
-                                <%= order.selectedAddress.city %><br>
-                                <%= order.selectedAddress.state %>, <%= order.selectedAddress.country %> <%= order.selectedAddress.zipCode %><br>
+                                <p> <%= order.selectedAddress.street %></p>
+                                <p> <%= order.selectedAddress.city %></p>
+                                <p> <%= order.selectedAddress.state %></p>
+                                <p> <%= order.selectedAddress.zipCode %></p>
+                                <p><%= order.selectedAddress.country %></p>
                             <% } else { %>
-                                Address not available
+                                <p>Address not available</p>
                             <% } %>
+                            
                         </td>
                     </tr>
                 <% }); %>
@@ -294,8 +298,8 @@
     }
     
 
-function viewProductDetails(productId) {
-        window.location.href = `/admin/dashboard/view-product/${productId}`;
+    function viewOrderDetails(orderId) {
+        window.location.href = `/admin/dashboard/view-product/${orderId}`;
     }
 
     </script>

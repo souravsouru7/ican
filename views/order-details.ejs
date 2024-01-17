@@ -162,7 +162,7 @@ h2 {
               </tr>
             </thead>
             <tbody>
-              <% order.products.forEach(product => { %>
+              <% order.Product.forEach(product => { %>
                 <tr>
                   <td><%= product.product.productName %></td>
                   <td><img src="/uploads/<%= product.product.productImage %>" alt="<%= product.product.productName %>" class="img-fluid"></td>

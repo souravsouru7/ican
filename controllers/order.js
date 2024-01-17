@@ -26,7 +26,7 @@ exports.getOrderHistory = async (req, res) => {
       .sort({ createdAt: -1 })
       .skip((page - 1) * ITEMS_PER_PAGE)
       .limit(ITEMS_PER_PAGE)
-      .populate('products.product');
+      .populate('Product.product');
 
     return res.render('order-history', { orders, currentPage: page, totalPages }); // Include totalPages in the data
   } catch (error) {
@@ -47,7 +47,7 @@ exports.getOrderDetails = async (req, res) => {
 
     const order = await Order.findOne({ _id: req.params.orderId, user: userId })
       .populate({
-        path: 'products.product',
+        path: 'Product.product',
         select: 'productName productImage regularPrice reviews',
       })
       .populate({
@@ -66,7 +66,7 @@ exports.getOrderDetails = async (req, res) => {
     }
 
     // Extract product from the first item in products array
-    const product = order.products.length > 0 ? order.products[0].product : null;
+    const product = order.Product.length > 0 ? order.Product[0].product : null;
 
     // Include order status, coupon details, and product in the data
     const orderStatus = order.status;

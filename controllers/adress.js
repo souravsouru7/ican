@@ -86,13 +86,20 @@ exports.generateRazorpayOrder = async (req, res) => {
     if (!userId) {
       return res.redirect('/login');
     }
+    const cart = await Cart.findOne({ user: userId }).populate('products.product');
 
-    const cart = await Cart.findOne({ user: userId });
+
     if (!cart || cart.totalAmount <= 0) {
       return res.status(400).json({ message: 'Invalid cart or total amount' });
     }
 
     const selectedAddressId = req.body.selectedAddress;
+    const selectedAddress = await Address.findById(selectedAddressId);
+    
+    if (!selectedAddress) {
+      return res.status(404).json({ message: 'Selected address not found' });
+    }
+    
     const selectedPaymentMethod = req.body.selectedPaymentMethod;
 
     let order;
@@ -116,9 +123,22 @@ exports.generateRazorpayOrder = async (req, res) => {
     
       order = new Order({
         user: userId,
-        products: cart.products,
+        products: cart.products.map(cartProduct => ({
+          productName: cartProduct.product.productName,
+          productImage: cartProduct.product.productImage,
+          category: cartProduct.product.category,
+          regularPrice: cartProduct.product.regularPrice,
+          quantity: cartProduct.quantity,
+        })),
+        Product: cart.products,
         totalAmount: cart.totalAmount,
-        selectedAddress: selectedAddressId,
+        selectedAddress: {
+          street: selectedAddress.street,
+          city: selectedAddress.city,
+          state: selectedAddress.state,
+          zipCode: selectedAddress.zipCode,
+          country: selectedAddress.country,
+        },
         walletPayment: true, 
         paymentMethod: 'wallet',
         couponApplied: appliedCoupon ? true : false,
@@ -137,10 +157,23 @@ exports.generateRazorpayOrder = async (req, res) => {
       const appliedCoupon = cart.appliedCoupon;
       order = new Order({
         user: userId,
-        products: cart.products,
+        products: cart.products.map(cartProduct => ({
+          productName: cartProduct.product.productName,
+          productImage: cartProduct.product.productImage,
+          category: cartProduct.product.category,
+          regularPrice: cartProduct.product.regularPrice,
+          quantity: cartProduct.quantity,
+        })),
+        Product: cart.products,
         totalAmount: cart.totalAmount,
         razorpayOrderId: razorpayOrder.id,
-        selectedAddress: selectedAddressId,
+        selectedAddress: {
+          street: selectedAddress.street,
+          city: selectedAddress.city,
+          state: selectedAddress.state,
+          zipCode: selectedAddress.zipCode,
+          country: selectedAddress.country,
+        },
         couponApplied: appliedCoupon ? true : false,
         couponDetails: appliedCoupon ? appliedCoupon._id : null,
         paymentMethod: 'online',
@@ -182,31 +215,38 @@ exports.cod= async (req, res) => {
 
     const selectedAddressId = req.params.selectedAddress;
 
-    // Fetch the user's cart from the database, populating the 'products' field
-    const cart = await Cart.findOne({ user: userId });
+      const selectedAddress = await Address.findById(selectedAddressId);
+    
+      if (!selectedAddress) {
+        return res.status(404).json({ message: 'Selected address not found' });
+      }
+      const cart = await Cart.findOne({ user: userId }).populate('products.product');
+
 
     if (!cart || cart.totalAmount <= 0) {
       return res.status(400).json({ message: 'Invalid cart or total amount' });
     }
     const appliedCoupon = cart.appliedCoupon;
-    const orderProducts = await Promise.all(
-      cart.products.map(async (cartProduct) => {
-        const productDetails = await Product.findById(cartProduct.product);
-        return {
-          product: cartProduct.product,
-          quantity: cartProduct.quantity,
-          productName: productDetails.productName,
-          productImage: productDetails.productImage,
-          RegularPrice: productDetails.regularPrice,
-          // Add other product details as needed
-        };
-      })
-    );
+   
+    
     const order = new Order({
       user: userId,
-      products: orderProducts,
+      products: cart.products.map(cartProduct => ({
+        productName: cartProduct.product.productName,
+        productImage: cartProduct.product.productImage,
+        category: cartProduct.product.category,
+        regularPrice: cartProduct.product.regularPrice,
+        quantity: cartProduct.quantity,
+      })),
+      Product: cart.products,
       totalAmount: cart.totalAmount,
-      selectedAddress: selectedAddressId,
+      selectedAddress: {
+        street: selectedAddress.street,
+        city: selectedAddress.city,
+        state: selectedAddress.state,
+        zipCode: selectedAddress.zipCode,
+        country: selectedAddress.country,
+      },
       walletPayment: false,
       status: 'Ordered',
       paymentMethod: 'cod',
