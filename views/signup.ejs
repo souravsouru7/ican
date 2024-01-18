@@ -1,56 +1,114 @@
 
+<html lang="en">
+<head>
+	<title>Cera</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
 <link rel="stylesheet" href="styles/signup.css">
-<h1 style="text-align: center;">Sign Up </h1>
-<div class="container">
-    <div class="screen">
-        <div class="screen__content">
-            <form class="login" action="/signup" method="post" onsubmit="return validateForm()">
-                <div class="login__field">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="styles/new2/vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="styles/new2/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="styles/new2/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="styles/new2/vendor/animate/animate.css">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="styles/new2/vendor/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="styles/new2/vendor/animsition/css/animsition.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="styles/new2/vendor/select2/select2.min.css">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="styles/new2/vendor/daterangepicker/daterangepicker.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="styles/new2/css/util.css">
+	<link rel="stylesheet" type="text/css" href="styles/new2/css/main.css">
+<!--===============================================================================================-->
+</head>
+<body style="background-color: #666666;">
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<form class="login100-form validate-form"action="/signup" method="post" onsubmit="return validateForm()">
+					<span class="login100-form-title p-b-43">
+						Signup page
+					</span>
                     <label for="name">Name:</label>
-                    <input type="text" class="login__input" placeholder="User name" name="name" id="name" required>
-                    <div id="nameError" class="error-message"></div>
-                </div>
-             
-                <div class="login__field">
-                    <label for="email">Email:</label>
-                    <input type="email" class="login__input" placeholder="Email" name="email" id="email" required>
-                    <div id="emailError" class="error-message"></div>
-                </div>
-                <div class="login__field">
-                    <label for="mobile">Phone:</label>
-                    <input type="tel" class="login__input" placeholder="Mobile number" name="mobile" id="mobile" required>
-                    <div id="mobileError" class="error-message"></div>
-                </div>
-                <div class="login__field">
-                    <label for="password">Password:</label>
-                    <input type="password" class="login__input" placeholder="Password" name="password" id="password" required>
-                    <div id="passwordError" class="error-message"></div>
-                </div>
-                <div class="login__field">
-                    <label for="repassword">Confirm Password:</label>
-                    <input type="password" class="login__input" placeholder="RePassword" name="repassword" id="repassword" required>
-                    <div id="repasswordError" class="error-message"></div>
-                </div>
-                
-                <button class="button login__submit" type="submit">
-                    <span class="button__text">Signup</span>
-                    <i class="button__icon fas fa-chevron-right"></i>
-                </button>
-            </form>
-            <div class="social-login">
-                <div class="social-icons">
-                    <!-- Add your social icons here if needed -->
-                </div>
-            </div>
-        </div>
-        <div class="screen__background">
-            <span class="screen__background__shape screen__background__shape4"></span>
-            <span class="screen__background__shape screen__background__shape3"></span>
-            <span class="screen__background__shape screen__background__shape2"></span>
-            <span class="screen__background__shape screen__background__shape1"></span>
-        </div>
-    </div>
-</div>
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						
+						<input class="input100" type="text"  placeholder="User name" name="name" id="name">
+						<span class="focus-input100"></span>
+						<div id="nameError" class="error-message"></div>
+					</div>
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<label for="email">Email:</label>
+						<input class="input100" type="email"  placeholder="Email" name="email" id="email">
+						<span class="focus-input100"></span>
+						<div id="emailError" class="error-message"></div>
+					</div>
+                    <div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<label for="mobile">Phone:</label>
+						<input type="tel" class="input100" placeholder="Mobile number" name="mobile" id="mobile">
+						<span class="focus-input100"></span>
+						<div id="mobileError" class="error-message"></div>
+					</div>
+					
+					
+					<div class="wrap-input100 validate-input" data-validate="Password is required">
+						<label for="password">Password:</label>
+						<input type="password" class="input100" placeholder="Password" name="password" id="password" >
+						<span class="focus-input100"></span>
+						<div id="passwordError" class="error-message"></div>
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate="Password is required">
+						<label for="repassword">Confirm Password:</label>
+						<input type="password" class="input100" placeholder="RePassword" name="repassword" id="repassword">
+						<span class="focus-input100"></span>
+						<div id="repasswordError" class="error-message"></div>
+					</div>
+
+					
+			
+
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn">
+							Signup
+						</button>
+					</div>
+					
+					
+
+					
+				</form>
+
+				<div class="login100-more" style="background-image: url('img/bg_6.jpg');">
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+<!--===============================================================================================-->
+<script src="styles/new2/vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="styles/new2/vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+	<script src="styles/new2/vendor/bootstrap/js/popper.js"></script>
+	<script src="styles/new2/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="styles/new2/vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script src="styles/new2/vendor/daterangepicker/moment.min.js"></script>
+	<script src="styles/new2/vendor/daterangepicker/daterangepicker.js"></script>
+<!--===============================================================================================-->
+	<script src="styles/new2/vendor/countdowntime/countdowntime.js"></script>
+<!--===============================================================================================-->
+	<script src="styles/new2/js/main.js"></script>
 
 <script src="js/signup.js"></script>
 
