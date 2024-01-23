@@ -183,7 +183,11 @@ exports.generateRazorpayOrder = async (req, res) => {
 
     // Save the order to the database
     await order.save();
-
+    for (const cartProduct of cart.products) {
+      const product = await Product.findById(cartProduct.product);
+      product.quantity -= cartProduct.quantity;
+      await product.save();
+    }
     // Clear the user's cart after a successful payment
     await Cart.findOneAndDelete({ user: userId });
 
@@ -257,6 +261,11 @@ exports.cod= async (req, res) => {
 
     // Save the order to the database
     await order.save();
+    for (const cartProduct of cart.products) {
+      const product = await Product.findById(cartProduct.product);
+      product.quantity -= cartProduct.quantity;
+      await product.save();
+    }
 
     // Clear the user's cart after a successful order placement
     await Cart.findOneAndDelete({ user: userId });

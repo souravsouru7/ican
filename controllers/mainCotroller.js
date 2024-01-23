@@ -48,39 +48,38 @@ exports.shopPage = async (req, res) => {
 
         let products;
 
+        // Base query without any filters
+        let baseQuery = Product.find();
+
+        // Handle search query
         if (req.query.search) {
-            // Filter by search query
-            products = await Product.find({
-                $or: [
-                    { productName: { $regex: new RegExp(req.query.search, 'i') } },
-                    { 'category.name': { $regex: new RegExp(req.query.search, 'i') } },
-                ],
-            }).populate('category');
-        } else if (req.query.category) {
-            // Filter by category
+            baseQuery = baseQuery.or([
+                { productName: { $regex: new RegExp(req.query.search, 'i') } },
+                { 'category.name': { $regex: new RegExp(req.query.search, 'i') } },
+            ]);
+        }
+
+        // Handle category filter
+        if (req.query.category) {
             const selectedCategory = await Category.findOne({ name: req.query.category });
             if (selectedCategory) {
-                products = await Product.find({
-                    category: selectedCategory._id,
-                }).populate('category');
-            } else {
-                products = [];
+                baseQuery = baseQuery.where('category').equals(selectedCategory._id);
             }
-        } else if (req.query.priceRange || req.query.size) {
-            // Parse the price range values from the frontend
-            const [minPrice, maxPrice] = req.query.priceRange ? req.query.priceRange.split('-') : [0, Infinity];
-
-            // Filter by price range and size
-            products = await Product.find({
-                $and: [
-                    { regularPrice: { $gte: minPrice, $lte: maxPrice } },
-                    { shirtSize: req.query.size },
-                ],
-            }).populate('category');
-        } else {
-            // Fetch all products if no filters are applied
-            products = await Product.find().populate('category');
         }
+
+        // Handle size filter
+        if (req.query.size) {
+            baseQuery = baseQuery.where('shirtSize').equals(req.query.size);
+        }
+
+        // Handle price range filter
+        if (req.query.priceRange) {
+            const [minPrice, maxPrice] = req.query.priceRange.split('-');
+            baseQuery = baseQuery.where('regularPrice').gte(minPrice).lte(maxPrice);
+        }
+
+        // Execute the base query to get products
+        products = await baseQuery.populate('category').exec();
 
         // Sort products based on user's preference
         if (req.query.sort === 'low-to-high') {
@@ -102,6 +101,7 @@ exports.shopPage = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
 
   
 // mainController.js

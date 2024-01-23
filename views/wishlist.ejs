@@ -52,7 +52,7 @@
     <% if (wishlist.length > 0) { %>
         <% wishlist.forEach(item => { %>
             <div class="pro">
-                <img src="/uploads/<%= item.product.productImage %>" alt="<%= item.product.productName %> Image">
+                <img src="/uploads/<%= item.product.productImage[0] %>" alt="<%= item.product.productName %> Image">
                 <h3><%= item.product.productName %></h3>
                 <p><strong>Category:</strong> <%= item.product.category.name %></p>
                 <!-- Add other product details as needed -->
@@ -63,4 +63,3 @@
     <% } %>
 </div>
 
-<!-- ... (other HTML) -->

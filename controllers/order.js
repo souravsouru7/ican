@@ -108,6 +108,11 @@ exports.cancelOrder = async (req, res) => {
 
     // Save the changes to the order
     await order.save();
+    for (const cartProduct of order.Product) {
+      const product = await Product.findById(cartProduct.product);
+      product.quantity += cartProduct.quantity;
+      await product.save();
+    }
     if (order.paymentMethod === 'cod') {
       // If it's Cash on Delivery, no need to add the amount to the wallet
       return res.redirect('/wallet'); // Redirect to the wallet page without adding the amount
@@ -179,8 +184,11 @@ exports.returnOrder = async (req, res) => {
 
     // Save the changes to the order
     await order.save();
-
-    // Fetch the user and wallet details
+    for (const cartProduct of order.Product) {
+      const product = await Product.findById(cartProduct.product);
+      product.quantity += cartProduct.quantity;
+      await product.save();
+    }
     const user = await User.findById(userId).populate('wallet');
 
     // If the user is not found, return an error
