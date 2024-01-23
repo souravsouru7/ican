@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/styles/add-product.css">
 <body>
-    <form action="/admin/dashboard/add-product" method="post" enctype="multipart/form-data">
+    <form id="productForm" action="/admin/dashboard/add-product" method="post" enctype="multipart/form-data">
 
         <h1>Add Product</h1>
 
@@ -37,12 +37,29 @@
             <option value="In Stock">In Stock</option>
             <option value="Out of Stock">Out of Stock</option>
         </select>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" required></textarea>
 
-        <label for="productImage">Product Image:</label>
-        <input type="file" id="productImage" name="productImage" accept="image/*" required>
-
+        <label for="productImages">Product Images:</label>
+        <input type="file" id="productImages" name="productImages" accept="image/*" multiple>
+        
         <button type="submit">Add Product</button>
     </form>
 </body>
+<script>
+    // JavaScript to display selected file names
+    document.getElementById('productImages').addEventListener('change', function () {
+        const selectedFilesContainer = document.getElementById('selectedFilesContainer');
+        selectedFilesContainer.innerHTML = '';
+
+        const files = this.files;
+
+        for (const file of files) {
+            const fileNameElement = document.createElement('div');
+            fileNameElement.textContent = file.name;
+            selectedFilesContainer.appendChild(fileNameElement);
+        }
+    });
+</script>
 
 </html>

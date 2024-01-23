@@ -29,7 +29,7 @@
         </td>
         <td>
           <img
-            src="/uploads/<%= product.productImage %>"
+            src="/uploads/<%= product.productImage[0] %>"
             alt="<%= product.productName %> Image"
           />
         </td>
@@ -42,13 +42,17 @@
           <% } %>
         </td>
         <td>
-          <input
-            type="number"
-            value="<%= product.quantity %>"
-            data-product-id="<%= product._id %>"
-            data-price="<%= product.regularPrice !== undefined ? product.regularPrice.toFixed(2) : '' %>"
-            onchange="updateSubtotalAndTotal(this)"
-          />
+          <button type="button" onclick="decreaseQuantity(this)" data-product-id="<%= product._id %>">-</button>
+  <!-- Quantity input -->
+  <input
+    type="number"
+    value="<%= product.quantity %>"
+    data-product-id="<%= product._id %>"
+    data-price="<%= product.regularPrice !== undefined ? product.regularPrice.toFixed(2) : '' %>"
+    onchange="updateSubtotalAndTotal(this)"
+  />
+  <!-- Increase button -->
+  <button type="button" onclick="increaseQuantity(this)" data-product-id="<%= product._id %>">+</button>
         </td>
         <td id="subtotal_<%= product._id %>">
           <% if (product.regularPrice !== undefined) { %>
@@ -88,14 +92,25 @@
   
       
     </table>
-    <a href="/delivery-address"
-      ><button class="normal">Proceed to checkout</button></a
-    >
+    <a href="#" onclick="checkCartAndRedirect('<%= products.length > 0 ? '/delivery-address' : '#' %>');">
+      <button class="normal">Proceed to checkout</button>
+    </a>
+    
+    
   </div>
 </section>
 <script>
 // Inside your script
 // Inside your script
+function checkCartAndRedirect(destination) {
+  const cartIsEmpty = <%= products.length === 0 %>;
+
+  if (cartIsEmpty) {
+    alert('Your cart is empty. Please add products before proceeding.');
+  } else {
+    window.location.href = destination;
+  }
+}
 
 
  document.addEventListener("DOMContentLoaded", async function () {
@@ -110,6 +125,19 @@
       updateSubtotalAndTotal(this);
     });
   });
+  
+  const decreaseButtons = document.querySelectorAll("[data-action='decrease']");
+  decreaseButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      decreaseQuantity(this);
+    });
+  });
+  const increaseButtons = document.querySelectorAll("[data-action='increase']");
+  increaseButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      increaseQuantity(this);
+    });
+  });
 
   const removeButtons = document.querySelectorAll(".fa-trash");
   removeButtons.forEach((button) => {
@@ -120,6 +148,28 @@
   await updateCartDetails();
   updateTotal();
 });
+// Function to decrease the quantity
+function decreaseQuantity(button) {
+  const input = button.nextElementSibling; // Get the input element
+  let quantity = parseInt(input.value) || 0;
+  
+  // Ensure quantity is at least 1
+  quantity = Math.max(1, quantity - 1);
+
+  input.value = quantity;
+  updateSubtotalAndTotal(input);
+}
+
+// Function to increase the quantity
+function increaseQuantity(button) {
+  const input = button.previousElementSibling; // Get the input element
+  let quantity = parseInt(input.value) || 0;
+
+  quantity++; // Increase quantity
+  input.value = quantity;
+  updateSubtotalAndTotal(input);
+}
+
 
 async function updateSubtotalAndTotal(input) {
   const quantityInputValue = input.value.trim();
@@ -127,7 +177,11 @@ async function updateSubtotalAndTotal(input) {
     return;
   }
 
-  const quantity = parseInt(quantityInputValue);
+  let quantity = parseInt(quantityInputValue);
+
+  // Ensure quantity is at least 1
+  quantity = Math.max(1, quantity);
+
   const price = parseFloat(input.getAttribute("data-price"));
   const productId = input.getAttribute("data-product-id");
   const subtotalElement = document.getElementById(`subtotal_${productId}`);
@@ -136,9 +190,7 @@ async function updateSubtotalAndTotal(input) {
     subtotalElement.dataset.previousSubtotal = subtotalElement.textContent;
   }
 
-  const previousSubtotal = parseFloat(
-    subtotalElement.dataset.previousSubtotal
-  );
+  const previousSubtotal = parseFloat(subtotalElement.dataset.previousSubtotal);
   const subtotal = (quantity * price).toFixed(2);
 
   subtotalElement.dataset.previousSubtotal = subtotal;
@@ -150,6 +202,7 @@ async function updateSubtotalAndTotal(input) {
   // After updating cart details, update the total
   await updateTotal();
 }
+
 
 async function updateCartDetails(productId, quantity) {
   try {

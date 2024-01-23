@@ -4,6 +4,28 @@ const Cart = require('../models/cart');
 const Coupon=require("../models/coupon");
 const Order = require('../models/order');
 
+const updateCartProductQuantity = async (cart, productId, quantityChange) => {
+    // Find the product in the cart
+    const cartProduct = cart.products.find(p => p.product.equals(productId));
+
+    if (cartProduct) {
+        // Check if the new quantity exceeds the available stock
+        const product = await Product.findById(productId);
+        if (cartProduct.quantity + quantityChange > product.quantity) {
+            throw new Error('Insufficient stock');
+        }
+
+        // Adjust the quantity
+        cartProduct.quantity += quantityChange;
+
+        // Adjust the total amount
+        cart.totalAmount += quantityChange * product.regularPrice;
+
+        // Save the updated cart
+        await cart.save();
+    }
+};
+
 exports.addToCart = async (req, res) => {
     const productId = req.params.productId;
     const userId = req.session.user ? req.session.user._id : null;
@@ -21,27 +43,25 @@ exports.addToCart = async (req, res) => {
 
         const quantity = req.body.quantity || 1; // Default to 1 if not provided
 
-        if (quantity > product.quantity) {
-            return res.status(400).json({ success: false, message: 'Insufficient stock' });
-        }
-
         const cart = await Cart.findOne({ user: userId });
 
         if (cart) {
-            // Check if the product is already in the cart
             const existingProductIndex = cart.products.findIndex(p => p.product.equals(productId));
 
             if (existingProductIndex !== -1) {
-                // If the product is already in the cart, update its quantity
-                cart.products[existingProductIndex].quantity += quantity;
+                // Product already exists in the cart, update the quantity
+                try {
+                    await updateCartProductQuantity(cart, productId, quantity);
+                } catch (error) {
+                    // Handle insufficient stock or other errors
+                    return res.status(400).json({ success: false, message: error.message });
+                }
             } else {
-                // If the product is not in the cart, add it with the specified quantity
+                // Product is not in the cart, add it
                 cart.products.push({ product: productId, quantity });
+                cart.totalAmount += quantity * product.regularPrice;
+                await cart.save();
             }
-
-            // Update the cart total
-            cart.totalAmount += quantity * product.regularPrice;
-            await cart.save();
         } else {
             // If the user doesn't have a cart, create a new one
             const newCart = new Cart({
@@ -51,9 +71,10 @@ exports.addToCart = async (req, res) => {
             });
             await newCart.save();
         }
-
+    
         product.quantity -= quantity;
         await product.save();
+
         return res.status(200).json({ success: true, message: 'Product added to cart successfully' });
     } catch (error) {
         console.error(error);
@@ -62,8 +83,9 @@ exports.addToCart = async (req, res) => {
 };
 
 
-// Assuming your template file is 'cart.ejs'
-// Update the file path and variable names accordingly
+
+
+
 
 exports.viewCart = async (req, res) => {
     try {
@@ -113,6 +135,33 @@ exports.viewCart = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
+const updateTotalInDatabase = async (userId) => {
+    try {
+        const cart = await Cart.findOne({ user: userId });
+
+        if (cart) {
+            // Calculate the total amount based on the remaining products in the cart
+            const updatedTotal = await cart.products.reduce(async (totalPromise, cartProduct) => {
+                const total = await totalPromise;
+
+                const product = await Product.findById(cartProduct.product);
+                return total + cartProduct.quantity * product.regularPrice;
+            }, Promise.resolve(0));
+
+            console.log('Updating total in the database. User:', userId, 'New Total:', updatedTotal);
+
+            cart.totalAmount = updatedTotal;
+            await cart.save();
+            return updatedTotal;
+        } else {
+            console.error('Cart not found for the user:', userId);
+            return 0; // Return 0 if the cart is not found
+        }
+    } catch (error) {
+        console.error('Error updating total in the database:', error);
+        return 0; // Return 0 in case of an error
+    }
+};
 
 exports.removeFromCart = async (req, res) => {
     const productId = req.params.productId;
@@ -129,30 +178,40 @@ exports.removeFromCart = async (req, res) => {
         }
 
         // Find the product in the cart
-        const cartProduct = cart.products.find(cartItem => cartItem.product.equals(productId));
+        const cartProductIndex = cart.products.findIndex(cartItem => cartItem.product.equals(productId));
 
-        if (!cartProduct) {
+        if (cartProductIndex !== -1) {
+            const cartProduct = cart.products[cartProductIndex];
+
+            // Remove the product from the cart
+            await Cart.updateOne(
+                { _id: cart._id },
+                { $pull: { products: { product: productId } } }
+            );
+
+            // Wait for the updateOne operation to complete
+            await Cart.findOne({ user: userId });
+
+            // If there are no more products in the cart, delete the entire cart
+           
+
+            // Update the total in the database
+            const updatedTotal = await updateTotalInDatabase(userId, cart.totalAmount - (cartProduct.quantity * cartProduct.product.regularPrice));
+
+            return res.status(200).json({
+                message: 'Product removed from cart successfully',
+                updatedTotal,
+            });
+        } else {
             return res.status(404).json({ message: 'Product not found in the cart' });
         }
-
-        // Remove the product from the cart
-        await Cart.updateOne(
-            { _id: cart._id },
-            { $pull: { products: { product: productId } } }
-        );
-
-        // Update the total in the database
-        const updatedTotal = await updateTotalInDatabase(userId, cart.totalAmount - (cartProduct.quantity * cartProduct.product.regularPrice));
-
-        return res.status(200).json({
-            message: 'Product removed from cart successfully',
-            updatedTotal,
-        });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+
 
 
 
@@ -200,17 +259,24 @@ exports.cartdetails = async (req, res) => {
     }
 };
 
-// Function to update the total in the database
-const updateTotalInDatabase = async (userId, newTotal) => {
+
+
+
+
+  
+const updateTotalInDatabases = async (userId, amountChange) => {
     try {
         const cart = await Cart.findOne({ user: userId });
 
         if (cart) {
-            // Check if the newTotal is a valid number
-            const validTotal = !isNaN(newTotal) ? newTotal : 0;
+            // Subtract the amountChange from the total amount
+            cart.totalAmount -= amountChange;
 
-            cart.totalAmount = validTotal;
+            // Save the updated cart
             await cart.save();
+
+            console.log('Updated total in the database. User:', userId, 'New Total:', cart.totalAmount);
+            
             return cart.totalAmount;
         } else {
             console.error('Cart not found for the user:', userId);
@@ -221,9 +287,6 @@ const updateTotalInDatabase = async (userId, newTotal) => {
         return 0; // Return 0 in case of an error
     }
 };
-
-
-  
 
 exports.updateqnt = async (req, res) => {
     const productId = req.body.productId;
@@ -257,10 +320,10 @@ exports.updateqnt = async (req, res) => {
             product.quantity += oldQuantity - quantity;
 
             // Recalculate the total amount in the cart
-            const updatedTotal = cart.totalAmount + ((quantity - oldQuantity) * product.regularPrice);
+            const amountChange = (oldQuantity - quantity) * product.regularPrice;
 
             // Update the cart total in the database
-            await updateTotalInDatabase(userId, updatedTotal);
+            await updateTotalInDatabases(userId, amountChange);
 
             // Save the updated cart and product
             await cart.save();
@@ -314,7 +377,7 @@ exports.applyCoupon = async (req, res) => {
             discountAmount, 
         };
 
-        // Update the cart in the database
+
         await cart.save();
 
         return res.status(200).json({

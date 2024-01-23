@@ -13,7 +13,11 @@ const orderSchema = new mongoose.Schema({
   products: [
     {
       productName: { type: String, required: true },
-      productImage: { type: String, required: true },
+      productImage: [
+        {
+            type: String,
+        },
+    ],
       category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
       regularPrice: { type: Number, required: true },
       quantity: { type: Number, required: true },
@@ -53,6 +57,7 @@ const orderSchema = new mongoose.Schema({
     enum: ['Ordered', 'Shipped', 'Out for Delivery', 'Delivered',"Cancelled","Returned"],
     default: 'Ordered',
   },
+ 
   paymentMethod: {
     type: String,
     enum: ['cod', 'wallet', 'online'],
@@ -62,6 +67,7 @@ const orderSchema = new mongoose.Schema({
   couponApplied: { type: Boolean, default: false },
   couponDetails: { type: mongoose.Schema.Types.ObjectId, ref: 'Coupon' },
 });
+
 
 
 

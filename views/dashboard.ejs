@@ -5,19 +5,42 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles/dashboard.css">
+
     <title>Admin Dashboard</title>
-    <!-- Add this in the <head> section of your HTML -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <%- include("adminheader.ejs") %>
+
 <body>
+    <div class="container">
+        <div class="rev">
+            <i class="fa-solid fa-money-bill"></i>
+            <h3>Revenue</h3>
+            <span class="amount">Rs <%= totalRevenue %></span>
+        </div>
+        <div class="rev2">
+            <i class="fa-solid fa-truck"></i>
+            <h3>Orders</h3>
+            <span class="amount"><%= totalOrders %></span>
+        </div>
+        <div class="rev3">
+            <i class="fa-solid fa-calendar-days"></i>
+            <h3>Current Month</h3>
+            <span class="amount">Rs <%= monthlyRevenue %></span>
+        </div>
+        <div class="rev4">
+            <i class="fa-solid fa-rectangle-xmark"></i>
+            <h3>No of Cancelled Orders</h3>
+            <span class="amount"><%= numberOfCancelledOrders %></span>
+        </div>
+   </div>
     <div class="dashboard-container">
-        <div class="dashboard-container">
-            <header>
-            </header>
-            <section id="product-management">
+       
+        </header>
+        <section id="product-management" >
+            <div style=" min-width: 400px; max-width: 800px;">
                 <h2>Overview</h2>
                 <h1>Sales Chart</h1>
                 <!-- Filter dropdown -->
@@ -28,26 +51,31 @@
                 </select>
 
                 <!-- Daily Sales Chart -->
-                <canvas id="dailyChart" width="800" height="400"></canvas>
+                <canvas id="dailyChart" width="400" height="200"></canvas>
+            </div>
 
+            <div style=" min-width: 400px; max-width: 800px; ">
                 <!-- Monthly Sales Chart -->
-                <canvas id="monthlyChart" width="800" height="400" style="display: none;"></canvas>
+                <canvas id="monthlyChart" width="400" height="200" style="display: none;"></canvas>
+            </div>
 
+            <div style=" min-width: 400px; max-width: 800px;">
                 <!-- Yearly Sales Chart -->
-                <canvas id="yearlyChart" width="800" height="400" style="display: none;"></canvas>
-            </section>
-        </div>
-        <section id="category-sales">
+                <canvas id="yearlyChart" width="400" height="200" style="display: none;"></canvas>
+            </div>
+        </section>
+
+        <section id="category-sales" style=" min-width: 400px; max-width: 800px; margin-top: 52px;">
             <h2>Category Sales Chart</h2>
-            <canvas id="categorySalesChart" width="800" height="400"></canvas>
+            <canvas id="categorySalesChart" width="400" height="200"></canvas>
         </section>
-        <section>
-            <h2>product Quantity</h2>
+    
+     
+        <section style="    min-width: 255px;  max-width: 825px; margin-top: 45px;">
+            <h2>Product Quantity</h2>
             <!-- Product Sales Chart -->
-            <canvas id="productSalesChart" width="800" height="400"></canvas>
-
+            <canvas id="productSalesChart" width="400" height="200"></canvas>
         </section>
-
     </div>
 
     <script>
@@ -55,7 +83,7 @@
             // Fetch initial data and update charts
             updateSelectedChart();
             updateCategorySalesChart();
-             updateProductSalesChart();
+            updateProductSalesChart();
         });
 
         async function updateSelectedChart() {
@@ -107,139 +135,88 @@
         }
 
         function updateSalesChart(chartId, data) {
-    const ctx = document.getElementById(chartId).getContext('2d');
+            const ctx = document.getElementById(chartId).getContext('2d');
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                label: 'Total Sales',
-                data: data.sales,
-                backgroundColor: [
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                    // Add more colors as needed
-                ],
-                borderColor: [
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)',
-                    // Add more colors as needed
-                ],
-                borderWidth: 1,
-            }],
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'category',
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Total Sales',
+                        data: data.sales,
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)', // Adjust color and transparency
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                    }],
                 },
-                y: {
-                    beginAtZero: true,
+                options: {
+                    scales: {
+                        x: {
+                            type: 'category',
+                            grid: {
+                                display: false,
+                            },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 10, // Adjust the step size of y-axis ticks
+                            },
+                        },
+                    },
                 },
-            },
-        },
-    });
-}
+            });
+        }
 
         const productSalesChart = document.getElementById('productSalesChart');
 
-// Fetch and update product sales chart
-async function updateProductSalesChart() {
-    try {
-        const response = await fetch('/api/product-sales-data');
-        const data = await response.json();
-
-        clearProductSalesChart();
-        updateProductSalesChartGraph(data);
-    } catch (error) {
-        console.error('Error fetching product sales data:', error);
-    }
-}
-
-function clearProductSalesChart() {
-    const ctx = productSalesChart.getContext('2d');
-    ctx.clearRect(0, 0, productSalesChart.width, productSalesChart.height);
-}
-
-
-function updateProductSalesChartGraph(data) {
-    const ctx = productSalesChart.getContext('2d');
-
-    new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                label: 'Product Sales',
-                data: data.sales,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)',
-                    // Add more colors as needed
-                ],
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1,
-            }],
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'category',
-                },
-                y: {
-                    beginAtZero: true,
-                },
-            },
-        },
-    });
-}
-        document.getElementById('downloadButton').addEventListener('click', async () => {
+        // Fetch and update product sales chart
+        async function updateProductSalesChart() {
             try {
-                const response = await fetch('/admin/dashboard/sales-report', {
-                    method: 'GET',
-                });
+                const response = await fetch('/api/product-sales-data');
+                const data = await response.json();
 
-                if (response.ok) {
-                    const blob = await response.blob();
-
-                    // Create a temporary link element
-                    const link = document.createElement('a');
-
-                    link.href = window.URL.createObjectURL(blob);
-
-                    // Specify the filename for the download
-                    link.download = 'sales_report.xlsx';
-
-                    // Append the link to the document
-                    document.body.appendChild(link);
-
-                    // Trigger a click event on the link to start the download
-                    link.click();
-
-                    // Remove the link from the document
-                    document.body.removeChild(link);
-                } else {
-                    // Handle the error (e.g., display an error message)
-                    console.error('Failed to download sales report:', response.statusText);
-                }
+                clearProductSalesChart();
+                updateProductSalesChartGraph(data);
             } catch (error) {
-                // Handle network or other errors
-                console.error('Error downloading sales report:', error);
+                console.error('Error fetching product sales data:', error);
             }
-        });
+        }
+
+        function clearProductSalesChart() {
+            const ctx = productSalesChart.getContext('2d');
+            ctx.clearRect(0, 0, productSalesChart.width, productSalesChart.height);
+        }
+
+        function updateProductSalesChartGraph(data) {
+            const ctx = productSalesChart.getContext('2d');
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Product Sales',
+                        data: data.sales,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                        ],
+                        borderColor: 'rgba(255, 255, 255, 1)', // Border color
+                        borderWidth: 1,
+                    }],
+                },
+                options: {
+                    legend: {
+                        position: 'right', // Adjust the legend position
+                    },
+                },
+            });
+        }
 
         async function updateCategorySalesChart() {
             try {
@@ -271,15 +248,7 @@ function updateProductSalesChartGraph(data) {
                     datasets: [{
                         label: 'Total Sales',
                         data: data.sales,
-                        backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)',
-                    // Add more colors as needed
-                ],
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)', // Adjust color and transparency
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 1,
                     }],
@@ -288,9 +257,15 @@ function updateProductSalesChartGraph(data) {
                     scales: {
                         x: {
                             type: 'category',
+                            grid: {
+                                display: false,
+                            },
                         },
                         y: {
                             beginAtZero: true,
+                            ticks: {
+                                stepSize: 10, // Adjust the step size of y-axis ticks
+                            },
                         },
                     },
                 },
@@ -310,3 +285,137 @@ function updateProductSalesChartGraph(data) {
 </body>
 
 </html>
+
+<style>
+    .dashboard-container {
+        width: 80%;
+        margin: 20px auto;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        display: flex;
+    }
+
+    header {
+        background-color: #3498db;
+        color: #fff;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    nav {
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        padding: 10px 0;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    li {
+        margin: 0 15px;
+    }
+
+    a {
+        text-decoration: none;
+        color: #ecf0f1;
+        font-weight: bold;
+    }
+
+    section {
+        padding: 20px;
+    }
+
+    h2 {
+        color: #2c3e50;
+    }
+    .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .rev {
+            width: 200px;
+            height: 100px;
+            background-color: #f0d71a;
+            color: #3c3838;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px; /* Add margin for space */
+        }
+        .rev2 {
+            width: 200px;
+            height: 100px;
+            background-color: #31c82a;
+            color: #3c3838;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px; /* Add margin for space */
+        }
+        .rev3 {
+            width: 200px;
+            height: 100px;
+            background-color: #1ca5c7;
+            color: #3c3838;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px; /* Add margin for space */
+        }
+        .rev4 {
+            width: 200px;
+            height: 100px;
+            background-color: #4b93a9;
+            color: #3c3838;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px; /* Add margin for space */
+        }
+        .rev:hover {
+            background-color: #c9dae4;
+        }
+
+        h3 {
+            margin: 0;
+        }
+
+        .amount {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+</style>

@@ -642,11 +642,7 @@ footer a:hover{
     margin-right: 50px;
 
 }
-.small-img-group{
-    display: flex;
-    justify-content: space-between;
 
-}
 .small-imgcoloum{
     flex-basis: 24%;
     cursor: pointer;
@@ -1070,15 +1066,54 @@ h3 {
     border: none;
     cursor: pointer;
 }
+.product-display-page-child13{
+    text-align: left;
+    font-size: var(--font-size-base);
+    color: var(--color-black);
+    font-family: var(--font-arial);
+    position: absolute;
+    left: 151px;
+    width: 86px;
+    height: 83px;
+    object-fit: cover;
+    top: 900px;
+}
+.small-img-group {
+    display: flex;
+    margin-top: 10px;
+}
+
+.small-img-group img {
+    width: 100px; /* Adjust the width as needed */
+    height: 100px; /* Adjust the height as needed */
+    margin-right: 50px; /* Adjust the spacing between small images */
+    cursor: pointer;
+    border: 1px solid #ddd; /* Add a border for better visibility */
+    border-radius: 5px; /* Add rounded corners for a nicer look */
+}
+
+.small-img-group img:hover {
+    border: 1px solid #333; /* Change border color on hover */
+}
 
 </style>
 <%- include("header.ejs") %>
 
 <section id="prodetails" class="section-p1">
+    
     <div class="singleproimg">
-        <img src="/uploads/<%= product.productImage %>" alt="" width="100%" id="main">
+        <!-- Main Image -->
+        <img src="/uploads/<%= product.productImage[0] %>" alt="<%= product.productName %> Image" width="400px" height="400px" id="main">
+        
+        <!-- Small Images -->
         <div class="small-img-group">
-           
+            <% product.productImage.slice(1).forEach((image, index) => { %>
+                <img
+                    src="/uploads/<%= image %>"
+                    alt="<%= product.productName %> Image <%= index + 1 %>"
+                    onclick="changeImage(this)"
+                >
+            <% }); %>
         </div>
     </div>
 <div class="single-pro-details">
@@ -1107,8 +1142,7 @@ h3 {
     <!-- ... (existing code) -->
 
     <!-- Add a quantity input field -->
-    <label for="quantity">Quantity:</label>
-    <input type="number" id="quantity" name="quantity" min="1" required>
+  
 
     <button type="submit" id="addToCartBtn">Add to Cart</button>
     <div id="outOfStockMessage" style="color: red; display: none;">Product is out of stock</div>
@@ -1118,10 +1152,11 @@ h3 {
     <div id="successMessage"></div>
 
     <h4>Product Details</h4>
-    <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint minima vel iste eligendi consectetur provident. Dolore officia quo quam beatae.</span>
+   <p><%= product.description %></p>
 
 </div>
 </section>
+
 <section id="product1" class="section-p1">
     <h2>Featured Product</h2>
     <p>Summer Collection New Morden Design</p>
@@ -1132,7 +1167,7 @@ h3 {
             <div class="pro-container">
                 <% products.slice(0,4).forEach(product => { %>
                     <div class="pro">
-                        <img src="/uploads/<%= product.productImage %>" alt="<%= product.productName %> Image">
+                        <img src="/uploads/<%= product.productImage[0] %>" alt="<%= product.productName %> Image" alt="">
                         <div class="des">
                             <span><%= product.productName %></span>
                             <h5><%= product.category.name %></h5>
@@ -1211,16 +1246,21 @@ h3 {
 </section>
 
 <script>
+  function changeImage(element) {
+        const mainImage = document.getElementById('main');
+        mainImage.src = element.src;
+    }
 
 document.addEventListener('DOMContentLoaded', function () {
     const addToCartForm = document.getElementById('addToCartForm');
     const successMessage = document.getElementById('successMessage');
-    const addReviewForm = document.getElementById('addReviewForm');
+    const outOfStockMessage = document.getElementById('outOfStockMessage');
 
     addToCartForm.addEventListener('submit', async function (event) {
         event.preventDefault();
 
-        const quantity = document.getElementById('quantity').value;
+        const quantityInput = document.getElementById('quantity'); // Add an id to your quantity input field
+        const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
 
         try {
             const response = await fetch(addToCartForm.action, {
@@ -1235,6 +1275,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     successMessage.classList.add('blink');
                     successMessage.style.display = 'block';
                     outOfStockMessage.style.display = 'none'; // Hide out-of-stock message
+
+                    // Check if the product is already in the cart
+                    const cartQuantityElement = document.getElementById('cartQuantity');
+                    if (cartQuantityElement) {
+                        const currentQuantity = parseInt(cartQuantityElement.innerText);
+                        cartQuantityElement.innerText = currentQuantity + quantity; 
+                    }
                 } else {
                     console.error('Failed to add product to cart:', result.message);
                 }
@@ -1249,7 +1296,6 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error during fetch:', error);
         }
     });
-
     if (addReviewForm) {
         addReviewForm.addEventListener('submit', async function (event) {
             event.preventDefault();

@@ -66,7 +66,7 @@
         <% if (products.length > 0) { %>
             <% products.forEach(product => { %>
                 <div class="pro">
-                    <img src="/uploads/<%= product.productImage %>" alt="<%= product.productName %> Image">
+                    <img src="/uploads/<%= product.productImage[0] %>" alt="<%= product.productName %> Image">
                     <div class="des">
                         <span><%= product.productName %></span>
                         <h5><%= product.category.name %></h5>

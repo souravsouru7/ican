@@ -29,6 +29,8 @@ const userSchema = new mongoose.Schema({
     wallet: { type: mongoose.Schema.Types.ObjectId, ref: 'Wallet' },
     referralCode: { type: String, unique: true }, 
     usedReferralCodes: [{ type: String }],  
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
    
 });
 

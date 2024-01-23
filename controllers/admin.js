@@ -2,6 +2,7 @@ const PDFDocument = require('pdfkit');
 const Excel = require('exceljs');
 const fs = require('fs');
 const express = require("express");
+const moment = require('moment');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
@@ -20,6 +21,8 @@ const storage = multer.diskStorage({
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
 });
+
+
 // Handle admin sign-in page
 
 function requireAdminAuth(req, res, next) {
@@ -50,9 +53,57 @@ router.post('/adminLogin', (req, res) => {
 });
 
 
-router.get('/admin/dashboard',requireAdminAuth, (req, res) => {
-    res.render('dashboard'); // Assuming you have a dashboard.ejs file in your views folder
+
+router.get('/admin/dashboard', requireAdminAuth, async (req, res) => {
+    let totalRevenue = 0;
+    let totalOrders = 0;
+    let monthlyRevenue = 0;
+    let numberOfCancelledOrders = 0;
+    let numberOfCancelledProducts = 0;
+
+    try {
+        // Fetch delivered orders
+        const deliveredOrders = await Order.find({ status: 'Delivered' });
+
+        // Calculate total revenue
+        totalRevenue = deliveredOrders.reduce((total, order) => total + order.totalAmount, 0);
+
+        // Fetch total number of orders where isCancelled is false
+        totalOrders = await Order.countDocuments({ status: 'Delivered', isCancelled: false });
+
+        // Calculate monthly revenue
+        const currentMonthStart = moment().startOf('month');
+        const currentMonthEnd = moment().endOf('month');
+
+        monthlyRevenue = deliveredOrders
+            .filter(order => moment(order.createdAt).isBetween(currentMonthStart, currentMonthEnd))
+            .reduce((total, order) => total + order.totalAmount, 0);
+
+        // Fetch cancelled orders
+        const cancelledOrders = await Order.find({ status: 'Cancelled' });
+
+        // Calculate number of cancelled orders
+        numberOfCancelledOrders = cancelledOrders.length;
+
+        // Calculate number of cancelled products
+        numberOfCancelledProducts = cancelledOrders.reduce((total, order) => {
+            return total + order.products.filter(product => product.isCancelled).length;
+        }, 0);
+
+        res.render('dashboard', {
+            totalRevenue,
+            totalOrders,
+            monthlyRevenue,
+            numberOfCancelledOrders,
+            numberOfCancelledProducts,
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
+
+
 
 const upload = multer({ storage: storage });
 // In your route handler for rendering the add-product page
@@ -67,19 +118,24 @@ router.get('/admin/dashboard/add-product', async (req, res) => {
 });
 
 
-// Handle product creation form submission with image upload
-router.post('/admin/dashboard/add-product', upload.single('productImage'), async (req, res) => {
+
+
+router.post('/admin/dashboard/add-product', upload.array('productImages', 5), async (req, res) => {
     try {
         const {
             productName,
             categoryId,
             regularPrice,
-            salesPrice,
-            stockStatus,
+            shirtSize,
             quantity,
-            
-            shirtSize, // Add shirtSize field
+            units,
+            stockStatus,
+            description,
+            // ... other fields
         } = req.body;
+
+        // Retrieve filenames of uploaded images
+        const images = req.files.map((file) => file.filename);
 
         if (!mongoose.Types.ObjectId.isValid(categoryId)) {
             return res.status(400).send('Invalid categoryId');
@@ -91,22 +147,20 @@ router.post('/admin/dashboard/add-product', upload.single('productImage'), async
             return res.status(404).send('Category not found');
         }
 
+        // Create a new product with the provided data
         const newProduct = {
             productName,
             category: categoryId,
             regularPrice,
-            salesPrice,
-            stockStatus,
+            shirtSize,
             quantity,
-          
-            shirtSize, // Add shirtSize field
+            units,
+            stockStatus,
+            description,
+            productImage: images,
         };
 
-        // If an image is uploaded, add the productImage field
-        if (req.file) {
-            newProduct.productImage = req.file.filename;
-        }
-
+        // Save the new product to the database
         await Product.create(newProduct);
 
         // Redirect to the product list or admin dashboard
@@ -116,6 +170,7 @@ router.post('/admin/dashboard/add-product', upload.single('productImage'), async
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 // Display product creation form
 // Display product list
@@ -157,8 +212,20 @@ router.get('/admin/dashboard/edit-product/:productId', async (req, res) => {
     }
 });
 
-// Handle product update form submission
-router.post('/admin/dashboard/edit-product/:productId', upload.single('productImage'), async (req, res) => {
+// Display edit product form
+router.get('/admin/dashboard/edit-product/:productId', async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const product = await Product.findById(productId);
+        const categories = await Category.find();
+        res.render('edit-product', { product, categories });
+    } catch (error) {
+        console.error('Error fetching product for edit:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+router.post('/admin/dashboard/edit-product/:productId', upload.array('newProductImages', 5), async (req, res) => {
     try {
         const productId = req.params.productId;
         const {
@@ -169,43 +236,36 @@ router.post('/admin/dashboard/edit-product/:productId', upload.single('productIm
             stockStatus,
             quantity,
             units,
+            description,
             shirtSize,
-            offerPrice , 
+            offerPrice,
+            deleteImages, // Added parameter for deleted images
         } = req.body;
 
-        if (!mongoose.Types.ObjectId.isValid(categoryId)) {
-            return res.status(400).send('Invalid categoryId');
-        }
+        // Convert deleteImages to an array if it's a single value
+        const imagesToDelete = Array.isArray(deleteImages) ? deleteImages : [deleteImages];
 
-        // Check if the category with the given ID exists
-        const category = await Category.findById(categoryId);
-        if (!category) {
-            return res.status(404).send('Category not found');
-        }
+        // Remove the deleted images
+        const product = await Product.findById(productId);
+        product.productImage = product.productImage.filter(image => !imagesToDelete.includes(image));
 
-        const updatedProduct = {
-            productName,
-            category: categoryId,
-            regularPrice,
-            salesPrice,
-            stockStatus,
-            quantity,
-            units,
-            shirtSize, 
-            offerPrice,
-        };
+        // Add the new images
+        const newImages = req.files.map(file => file.filename);
+        product.productImage = product.productImage.concat(newImages);
 
-        // If a new image is uploaded, update the productImage field
-        if (req.file) {
-            updatedProduct.productImage = req.file.filename;
-        }
+        // Update other fields
+        product.productName = productName;
+        product.category = categoryId;
+        product.regularPrice = regularPrice;
+        product.salesPrice = salesPrice;
+        product.stockStatus = stockStatus;
+        product.quantity = quantity;
+        product.units = units;
+        product.description = description;
+        product.shirtSize = shirtSize;
+        product.offerPrice = offerPrice;
 
-        const result = await Product.findByIdAndUpdate(productId, updatedProduct, { new: true });
-
-        if (!result) {
-            console.error('Product not found or not updated.');
-            return res.status(404).send('Product not found or not updated.');
-        }
+        const updatedProduct = await product.save();
 
         // Redirect to the product list or admin dashboard
         res.redirect('/admin/dashboard/product-list');
@@ -265,8 +325,11 @@ router.get('/admin/dashboard/block-user/:userId', async (req, res) => {
 
 router.get('/admin/dashboard/category-list', async (req, res) => {
     try {
+        // Fetch categories from your database
         const categories = await Category.find();
-        res.render('category-list', { categories });
+
+        // Render the category-list view and pass the categories data
+        res.render('category-list', { title: 'Category List', categories });
     } catch (error) {
         console.error('Error fetching categories:', error);
         res.status(500).send('Internal Server Error');
@@ -276,17 +339,97 @@ router.post('/admin/dashboard/add-category', async (req, res) => {
     const { name, description } = req.body;
 
     try {
+        // Check if the category with the same name already exists (case-insensitive)
+        const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
+
+        if (existingCategory) {
+            const errorMessage = 'Category already exists.';
+            const message = '';  // Make sure to define message
+            return res.render('add-category', { title: 'Add Category', errorMessage, message });
+        }
+
+        // Continue with adding the new category
         const newCategory = new Category({ name, description });
         await newCategory.save();
-        res.redirect('/admin/dashboard/category-list');
+        
+        const message = 'Category added successfully.';
+        const errorMessage = '';  // Make sure to define errorMessage
+        res.render('add-category', { title: 'Add Category', message, errorMessage });
     } catch (error) {
         console.error('Error creating category:', error);
         res.status(500).send('Internal Server Error');
     }
 });
+
 router.get('/admin/dashboard/add-category', (req, res) => {
-    res.render('add-category', { title: 'Add Category' });
+    res.render('add-category', { title: 'Add Category', message: '', errorMessage: '' });
 });
+router.get('/admin/dashboard/edit-category/:id', async (req, res) => {
+    try {
+        const categoryId = req.params.id;
+        const category = await Category.findById(categoryId);
+
+        if (!category) {
+            return res.status(404).send('Category not found');
+        }
+
+        res.render('edit-category', { title: 'Edit Category', category, categoryId }); // Pass categoryId
+    } catch (error) {
+        console.error('Error fetching category:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Update category route - handle the form submission
+// Update category route - handle the form submission
+router.put('/admin/dashboard/edit-category/:id', async (req, res) => {
+    try {
+        const categoryId = req.params.id;
+        const { name, description } = req.body;
+
+        const updatedCategory = await Category.findByIdAndUpdate(
+            categoryId,
+            { name, description },
+            { new: true } // Return the updated category
+        );
+
+        if (!updatedCategory) {
+            return res.status(404).send('Category not found');
+        }
+
+        const message = 'Category updated successfully.';
+        res.status(200).json({ message, category: updatedCategory });
+    } catch (error) {
+        console.error('Error updating category:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
+// Delete category route
+// Delete category route
+// Delete category route
+router.get('/admin/dashboard/delete-category/:id', async (req, res) => {
+    try {
+        const categoryId = req.params.id;
+
+        const deletedCategory = await Category.findByIdAndDelete(categoryId);
+
+        if (!deletedCategory) {
+            return res.status(404).send('Category not found');
+        }
+
+        console.log('Category deleted successfully.'); // Add this line for debugging
+
+        // Redirect to the category list route
+        res.redirect('/admin/dashboard/category-list');
+    } catch (error) {
+        console.error('Error deleting category:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
 
 router.get('/admin/dashboard/coupon-list', async (req, res) => {
     try {
@@ -324,7 +467,7 @@ router.get('/admin/dashboard/user', async (req, res) => {
         const itemsPerPage = 4; // Number of items to display per page
         const page = parseInt(req.query.page) || 1; // Get the page number from the query parameters
 
-        // Extract the search query (order ID) and status from the request
+       
         const searchQuery = req.query.search;
         const statusFilter = req.query.status;
 
@@ -343,14 +486,13 @@ router.get('/admin/dashboard/user', async (req, res) => {
         // Calculate the number of pages based on total orders and items per page
         const totalPages = Math.ceil(totalOrders / itemsPerPage);
 
-        // Fetch orders with populated products and user based on the filter and pagination
+        // Fetch orders with populated products and user based on the filter, sorted by createdAt in descending order
         const orders = await Order.find(filter)
             .populate({
                 path: 'user',
                 select: 'name email',
             })
-           
-            
+            .sort({ createdAt: -1 })  // Sort by createdAt in descending order
             .skip((page - 1) * itemsPerPage)
             .limit(itemsPerPage);
 
@@ -360,6 +502,7 @@ router.get('/admin/dashboard/user', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 // Add this route to your admin routes
 router.post('/return-order/:orderId', async (req, res) => {

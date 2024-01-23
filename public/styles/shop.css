@@ -704,7 +704,12 @@ footer a:hover{
 
 
 
-
+.pro img {
+    width: 100%; /* Make the image take up 100% of its container's width */
+    height: 400px; /* Set a fixed height for uniformity (adjust as needed) */
+    object-fit: cover; /* Maintain aspect ratio and cover the container */
+    border-radius: 8px; /* Optional: Add border radius for rounded corners */
+}
 
 /* Add styles for the new sidebar section */
 #sidebar {

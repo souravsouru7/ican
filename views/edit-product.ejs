@@ -1,5 +1,92 @@
-<link rel="stylesheet" href="/styles/editproduct.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
+        form {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #343a40;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+
+        select {
+            height: 40px;
+        }
+
+        #existingImages {
+            margin-bottom: 15px;
+        }
+
+        .existing-image {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .existing-image img {
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #28a745;
+            color: #ffffff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+    <title>Edit Product</title>
+</head>
 <body>
     <form action="/admin/dashboard/edit-product/<%= product._id %>" method="post" enctype="multipart/form-data">
 
@@ -11,7 +98,7 @@
         <label for="category">Category:</label>
         <select id="category" name="categoryId" required>
             <% categories.forEach(category => { %>
-            <option value="<%= category._id %>"><%= category.name %></option>
+                <option value="<%= category._id %>"><%= category.name %></option>
             <% }); %>
         </select>
 
@@ -24,36 +111,41 @@
             <option value="XL">XL</option>
             <option value="XXL">XXL</option>
         </select>
-        <!-- Include other fields for editing -->
-        <!-- For example: -->
+
         <label for="salesPrice">Sales Price:</label>
         <input type="number" id="salesPrice" name="salesPrice" value="<%= product.salesPrice %>">
 
         <label for="stockStatus">Stock Status:</label>
         <select id="stockStatus" name="stockStatus" required>
             <option value="In Stock" <%= product.stockStatus === 'In Stock' ? 'selected' : '' %>>In Stock</option>
-            <option value="Out of Stock" <%= product.stockStatus === 'Out of Stock' ? 'selected' : '' %>>Out of Stock
-            </option>
+            <option value="Out of Stock" <%= product.stockStatus === 'Out of Stock' ? 'selected' : '' %>>Out of Stock</option>
         </select>
+
         <label for="offerPrice">Offer Price:</label>
         <input type="number" id="offerPrice" name="offerPrice" value="<%= product.offerPrice %>">
 
         <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" name="quantity" value="<%= product.quantity %>" required>
 
-       
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4"></textarea>
 
-        <!-- Add image upload functionality -->
-        <label for="productImage">Product Image:</label>
-        <input type="file" id="productImage" name="productImage">
-        <div>
-            <label>Current Product Image:</label>
-            <img src="/uploads/<%= product.productImage %>" alt="<%= product.productName %>" class="img-preview">
+        <label for="existingImages">Existing Images:</label>
+        <div id="existingImages">
+            <% product.productImage.forEach(image => { %>
+                <div class="existing-image">
+                    <img src="/uploads/<%= image %>" alt="<%= product.productName %>" height="80px" width="80px">
+                    <input type="checkbox" name="deleteImages" value="<%= image %>"> Delete
+
+                </div>
+            <% }); %>
         </div>
-
+        
+        <!-- Add this input field to allow uploading new images -->
+        <label for="newProductImages">New Product Images:</label>
+        <input type="file" id="newProductImages" name="newProductImages" accept="image/*" multiple>
 
         <button type="submit">Update Product</button>
     </form>
 </body>
-
 </html>

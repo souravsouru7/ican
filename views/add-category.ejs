@@ -8,75 +8,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Category</title>
 
+    <%- include("adminheader.ejs") %>
+
     <style>
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: url('/img/soo.jpeg');
+            position: relative;
             height: 100vh;
+            background-position: center;
         }
 
         h2 {
-            text-align: center;
-            color: #fff;
-            margin-bottom: 30px;
-            font-size: 2em;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            color: #007bff;
         }
 
         form {
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            padding: 20px;
             max-width: 400px;
-            width: 100%;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            border-radius: 5px;
         }
 
         label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
         }
 
         input,
         textarea {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
+            padding: 8px;
+            margin-bottom: 16px;
             box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 16px;
-            background-color: #f9f9f9;
-            transition: border-color 0.3s;
-        }
-
-        input:focus,
-        textarea:focus {
-            border-color: #ff7e5f;
-            outline: none;
         }
 
         button {
-            background-color: #ff7e5f;
+            background-color: #007bff;
             color: #fff;
-            padding: 12px 15px;
+            padding: 10px;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 18px;
-            transition: background-color 0.3s;
         }
 
-        button:hover {
-            background-color: #d66d4b;
+        .message,
+        .error-message {
+            color: red;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -85,6 +68,11 @@
     <h2>Add Category</h2>
 
     <form method="POST" action="/admin/dashboard/add-category">
+        <% if (errorMessage) { %>
+            <p class="error-message"><%= errorMessage %></p>
+        <% } else if (message) { %>
+            <p class="message"><%= message %></p>
+        <% } %>
 
         <div>
             <label for="name">Category Name:</label>
@@ -97,7 +85,6 @@
         </div>
 
         <button type="submit">Add Category</button>
-
     </form>
 </body>
 

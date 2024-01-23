@@ -13,7 +13,12 @@ connect.then(() => {
 
 const productSchema = new mongoose.Schema({
     productName: { type: String, required: true },
-    productImage: { type: String, required: true },
+    description: { type: String },
+    productImage: [
+        {
+            type: String,
+        },
+    ],
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
     regularPrice: { type: Number, required: true },
     salesPrice: { type: Number },

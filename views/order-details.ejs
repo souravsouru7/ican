@@ -165,7 +165,7 @@ h2 {
               <% order.Product.forEach(product => { %>
                 <tr>
                   <td><%= product.product.productName %></td>
-                  <td><img src="/uploads/<%= product.product.productImage %>" alt="<%= product.product.productName %>" class="img-fluid"></td>
+                  <td><img src="/uploads/<%= product.product.productImage[0] %>" alt="<%= product.product.productName %>" class="img-fluid"></td>
                   <td><%= product.product.regularPrice %></td>
                   <td><%= product.quantity %></td>
                 </tr>

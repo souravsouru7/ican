@@ -26,17 +26,26 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({
-    secret: 'your-secret-key',
-    resave: false,
+    secret: 'your-session-secret-key',
+    resave: true,
     saveUninitialized: true,
+    cookie: {
+        maxAge: 3600000, // 1 hour
+        secure: false, // set to true if your app is served over HTTPS
+    },
 }));
-
 // JWT Secret Key
 const jwtSecret = 'your-secret-jwt-key';
 
 // Move the jwtSecret definition above the middleware
 const verifyToken = (req, res, next) => {
     const token = req.cookies.token || req.headers.authorization;
+
+    // Check if the user is already authenticated
+    if (req.user) {
+        // User is logged in, redirect to a different page (e.g., home page)
+        return res.redirect('/home');
+    }
 
     if (!token) {
         // Redirect to login page if no token is provided
@@ -45,7 +54,6 @@ const verifyToken = (req, res, next) => {
 
     jwt.verify(token, jwtSecret, (err, decoded) => {
         if (err) {
-            // Redirect to login page if token is invalid
             return res.redirect('/login');
         }
 
@@ -53,6 +61,8 @@ const verifyToken = (req, res, next) => {
         next();
     });
 };
+``
+
 
 
 // Add the new routes with the verifyToken middleware
@@ -90,15 +100,19 @@ app.post('/profile/address/edit/:id', verifyToken, user.updateAddress);
 app.post('/generate-razorpay-order', verifyToken, deladres.generateRazorpayOrder);
 
 // Login routes
-app.get('/login', login.loginPage);
+app.get('/login',login.loginPage);
 app.post('/loginUser', login.loginUser);
 app.get('/logout', logout.logoutUser);
+app.get('/forgot', login.renderForgotPasswordPage);
+app.post('/forgot', login.forgotPassword);
+app.get('/reset/:token', login.renderResetPasswordPage);
+app.post('/reset/:token', login.resetPassword);
 app.get("/delivery-address",verifyToken, deladres.delivery);
 // Delivery and cart-related routes
 app.get('/delivery', verifyToken, deladres.delivery);
 app.post('/generate-cod-order/:selectedAddress',deladres.cod);
 app.get("/payment",deladres.payment);
-app.get("/successpage", deladres.payment);
+app.get("/successpage",  verifyToken,deladres.payment);
 app.post('/store-order-details/:orderId', verifyToken,deladres.storedata);
 
 //orders

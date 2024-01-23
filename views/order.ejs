@@ -149,7 +149,9 @@
                         <!-- Display search result details -->
                         <tr>
                             <td><%= order._id %></td>
-                            <td><%= order.createdAt %></td>
+                           <!-- Inside the <td> where you display the order creation date -->
+                            <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+
                             <td><%= order.user.name %></td>
                             <td><%= order.user.email %></td>
                             <td><%= order.products[0].productName %></td>

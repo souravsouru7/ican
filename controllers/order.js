@@ -282,7 +282,7 @@ exports.delrivew= async (req, res) => {
 exports.invoice = async (req, res) => {
   try {
     const orderId = req.params.orderId;
-    const order = await Order.findById(orderId).populate('user').populate('selectedAddress').populate('products.product');
+    const order = await Order.findById(orderId).populate('user').populate('selectedAddress').populate('Product.product');
 
 
     if (!order) {
@@ -396,7 +396,7 @@ function generateInvoiceContent(order) {
         </tr>
   `;
 
-  order.products.forEach(product => {
+  order.   Product.forEach(product => {
     content += `
         <tr>
           <td>${product.product.productName}</td>
@@ -406,7 +406,7 @@ function generateInvoiceContent(order) {
       `;
   });
 
-  const totalAmount = order.products.reduce((total, product) => total + product.product.regularPrice * product.quantity, 0);
+  const totalAmount = order.   Product.reduce((total, product) => total + product.product.regularPrice * product.quantity, 0);
 
   content += `
       </table>
