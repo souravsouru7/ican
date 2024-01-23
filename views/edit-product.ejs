@@ -3,89 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Product</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            justify-content: center;
+            min-height: 100vh;
         }
 
         form {
-            max-width: 600px;
-            margin: 50px auto;
+            background-color: #fff;
             padding: 20px;
-            background-color: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%; /* Adjust the width as needed */
+            overflow: auto;
         }
 
         h1 {
             text-align: center;
-            color: #343a40;
+            color: #3498db;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #495057;
+            margin-top: 10px;
         }
 
-        input[type="text"],
-        input[type="number"],
-        select,
-        input[type="file"],
-        textarea {
-            width: 100%;
-            padding: 10px;
+        input, select, textarea {
+            width: calc(100% - 16px);
+            padding: 8px;
+            margin-top: 5px;
             margin-bottom: 15px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
             box-sizing: border-box;
-            background-color: #f8f9fa;
-            color: #495057;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: inline-block;
+            vertical-align: top;
+            resize: none;
         }
 
         select {
-            height: 40px;
-        }
-
-        #existingImages {
-            margin-bottom: 15px;
-        }
-
-        .existing-image {
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        .existing-image img {
-            border-radius: 4px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            height: 35px;
         }
 
         button {
-            background-color: #28a745;
-            color: #ffffff;
-            padding: 12px 20px;
+            background-color: #3498db;
+            color: #fff;
             border: none;
-            border-radius: 4px;
+            padding: 10px 20px;
             cursor: pointer;
+            border-radius: 5px;
             font-size: 16px;
-            transition: background-color 0.3s ease-in-out;
         }
 
-        button:hover {
-            background-color: #218838;
+        #existingImages {
+            display: flex;
+            flex-wrap: wrap;
         }
+
+        .existing-image {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .existing-image img {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            height: 80px;
+            width: 80px;
+            object-fit: cover;
+        }
+
+        textarea {
+            width: calc(100% - 16px);
+            resize: vertical;
+        }
+
+        /* Add your custom styles here */
+
     </style>
-    <title>Edit Product</title>
 </head>
 <body>
     <form action="/admin/dashboard/edit-product/<%= product._id %>" method="post" enctype="multipart/form-data">

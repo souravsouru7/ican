@@ -5,54 +5,56 @@ const Coupon=require("../models/coupon");
 const shortid = require('shortid');
 const transporter = require('./mailer');
 exports.loginPage = (req, res) => {
-   
     if (req.session.user || req.cookies.token) {
-        return res.redirect("/");
+      return res.redirect('/');
     }
-
+  
+    // Pass the error message to the view
+    const errorMessage = req.session.errorMessage;
+    req.session.errorMessage = undefined;
+  
     // Render the login page for users who are not authenticated
-    res.render("login");
-};
-
-
-exports.loginUser = async (req, res) => {
+    res.render('login', { errorMessage });
+  };
+  
+  exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
-
+  
     try {
-        const user = await User.findOne({ email, password });
-
-        if (user) {
-            if (user.verified) {
-                // Set user information in the session, including the user's ID
-                req.session.user = {
-                    _id: user._id,
-                    email: user.email,
-                    password: user.password,
-                    verified: user.verified,
-                };
-
-
-                const token = jwt.sign(
-                    { _id: user._id, email: user.email, verified: user.verified },
-                    jwtSecret,
-                    { expiresIn: '1h' }
-                );
-                res.cookie('token', token);
-
-                res.redirect('/');
-            } else {
-                req.session.verificationMessage = 'Your email is not verified. Please verify your email.';
-                res.redirect('/login');
-            }
+      const user = await User.findOne({ email, password });
+  
+      if (user) {
+        if (user.verified) {
+          // Set user information in the session, including the user's ID
+          req.session.user = {
+            _id: user._id,
+            email: user.email,
+            password: user.password,
+            verified: user.verified,
+          };
+  
+          const token = jwt.sign(
+            { _id: user._id, email: user.email, verified: user.verified },
+            jwtSecret,
+            { expiresIn: '1h' }
+          );
+          res.cookie('token', token);
+  
+          res.redirect('/');
         } else {
-            req.session.verificationMessage = 'Invalid email or password.';
-            res.redirect('/login');
+          req.session.errorMessage = 'Your email is not verified. Please verify your email.';
+          res.redirect('/login');
         }
+      } else {
+        // Pass error message to the view
+        req.session.errorMessage = 'Invalid email or password.';
+        res.redirect('/login');
+      }
     } catch (error) {
-        console.error('Error during login:', error);
-        res.status(500).send('Internal Server Error');
+      console.error('Error during login:', error);
+      res.status(500).send('Internal Server Error');
     }
-};
+  };
 
 
 exports.logoutUser = (req, res) => {

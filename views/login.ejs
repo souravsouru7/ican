@@ -5,7 +5,13 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
+<style>
+	.error-message {
+  color: red;
+  margin-bottom: 10px; /* Optional: Adjust margin as needed */
+}
 
+</style>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="styles/new2/vendor/bootstrap/css/bootstrap.min.css">
 <!--===============================================================================================-->
@@ -49,7 +55,12 @@
 						<span class="focus-input100"></span>
 						<span class="label-input100">Password</span>
 					</div>
-
+					<div class="error-message">
+						<% if (typeof errorMessage !== 'undefined') { %>
+						  <%= errorMessage %>
+						<% } %>
+					  </div>
+					  
 
 					<div class="flex-sb-m w-full p-t-3 p-b-32">
 						<div class="contact100-form-checkbox">

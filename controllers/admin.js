@@ -2,7 +2,7 @@ const PDFDocument = require('pdfkit');
 const Excel = require('exceljs');
 const fs = require('fs');
 const express = require("express");
-const moment = require('moment');
+
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
@@ -15,6 +15,7 @@ const Order = require('../models/order');
 const Chart = require('chart.js');
 const ejs = require('ejs');
 const pdf = require('html-pdf');
+const moment = require('moment');
 const storage = multer.diskStorage({
     destination: './public/uploads/',
     filename: function (req, file, cb) {
@@ -63,6 +64,7 @@ router.get('/admin/dashboard', requireAdminAuth, async (req, res) => {
 
     try {
         // Fetch delivered orders
+        const recentOrders = await Order.find().sort({ createdAt: -1 }).limit(5).populate('user', 'name');
         const deliveredOrders = await Order.find({ status: 'Delivered' });
 
         // Calculate total revenue
@@ -96,6 +98,7 @@ router.get('/admin/dashboard', requireAdminAuth, async (req, res) => {
             monthlyRevenue,
             numberOfCancelledOrders,
             numberOfCancelledProducts,
+            recentOrders,
         });
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -495,6 +498,10 @@ router.get('/admin/dashboard/user', async (req, res) => {
             .sort({ createdAt: -1 })  // Sort by createdAt in descending order
             .skip((page - 1) * itemsPerPage)
             .limit(itemsPerPage);
+            orders.forEach(order => {
+                order.createdAtFormatted = moment(order.createdAt).format('Do MMMM YYYY, h:mm a');
+            });
+    
 
         res.render('order', { orders, searchQuery, statusFilter, totalPages, currentPage: page });
     } catch (error) {

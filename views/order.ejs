@@ -104,6 +104,9 @@
             cursor: pointer;
         }
     </style>
+    <!-- Add this script tag to include the moment library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 </head>
 <body>
 
@@ -150,7 +153,9 @@
                         <tr>
                             <td><%= order._id %></td>
                            <!-- Inside the <td> where you display the order creation date -->
-                            <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                          <!-- Replace this line for displaying the order creation date -->
+                        
+                          <td><%= order.createdAtFormatted %></td>
 
                             <td><%= order.user.name %></td>
                             <td><%= order.user.email %></td>
@@ -189,7 +194,7 @@
                     <!-- Display order details -->
                     <tr>
                         <td><%= order._id %></td>
-                        <td><%= order.createdAt %></td>
+                        <td><%= order.createdAtFormatted %></td>
                         <td><%= order.user.name %></td>
                         <td><%= order.user.email %></td>
                         <td><%= order.products[0].productName %></td>
