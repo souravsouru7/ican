@@ -102,7 +102,7 @@ exports.forgotPassword = async (req, res) => {
         );
 
         // Send password reset email
-        const resetLink = `http://localhost:3000/reset/${resetToken}`;
+        const resetLink = `http://ceraaa.shop/reset/${resetToken}`;
         const mailOptions = {
             from: 'soutavr5@gmail.com',
             to: email,
